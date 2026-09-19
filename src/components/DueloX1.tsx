@@ -226,11 +226,26 @@ Gerado pelo app *Carrão do Lucão* 🚀
       {/* Fighter Selection Pods */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Fighter A */}
-        <div className="p-4 rounded-2xl bg-slate-900/90 border border-blue-500/40 shadow-xl space-y-3 relative overflow-hidden">
-          <div className="absolute top-0 left-0 right-0 h-1 bg-blue-500" />
+        <div className={`p-4 rounded-2xl bg-slate-900/90 border shadow-xl space-y-3 relative overflow-hidden transition-all ${
+          winnerCar?.id === carA.id
+            ? 'border-emerald-500 shadow-emerald-950/40 ring-1 ring-emerald-500/40'
+            : loserCar?.id === carA.id
+            ? 'border-slate-800 opacity-80'
+            : 'border-blue-500/40'
+        }`}>
+          <div className={`absolute top-0 left-0 right-0 h-1 transition-colors ${
+            winnerCar?.id === carA.id ? 'bg-emerald-500' : 'bg-blue-500'
+          }`} />
           <div className="flex items-center justify-between">
-            <span className="text-xs font-black uppercase tracking-wider text-blue-400 flex items-center gap-1.5">
+            <span className={`text-xs font-black uppercase tracking-wider flex items-center gap-1.5 ${
+              winnerCar?.id === carA.id ? 'text-emerald-400' : 'text-blue-400'
+            }`}>
               🥊 Desafiante A (Player 1)
+              {winnerCar?.id === carA.id && (
+                <span className="bg-emerald-500/20 text-emerald-400 text-[10px] px-2 py-0.5 rounded-full border border-emerald-500/30 font-bold ml-1">
+                  Vencedor ({scoreA} rounds)
+                </span>
+              )}
             </span>
             <VerdictBadge badge={carA.results.verdictBadge} size="sm" showLabel={false} />
           </div>
@@ -260,11 +275,26 @@ Gerado pelo app *Carrão do Lucão* 🚀
         </div>
 
         {/* Fighter B */}
-        <div className="p-4 rounded-2xl bg-slate-900/90 border border-rose-500/40 shadow-xl space-y-3 relative overflow-hidden">
-          <div className="absolute top-0 left-0 right-0 h-1 bg-rose-500" />
+        <div className={`p-4 rounded-2xl bg-slate-900/90 border shadow-xl space-y-3 relative overflow-hidden transition-all ${
+          winnerCar?.id === carB.id
+            ? 'border-emerald-500 shadow-emerald-950/40 ring-1 ring-emerald-500/40'
+            : loserCar?.id === carB.id
+            ? 'border-slate-800 opacity-80'
+            : 'border-rose-500/40'
+        }`}>
+          <div className={`absolute top-0 left-0 right-0 h-1 transition-colors ${
+            winnerCar?.id === carB.id ? 'bg-emerald-500' : 'bg-rose-500'
+          }`} />
           <div className="flex items-center justify-between">
-            <span className="text-xs font-black uppercase tracking-wider text-rose-400 flex items-center gap-1.5">
+            <span className={`text-xs font-black uppercase tracking-wider flex items-center gap-1.5 ${
+              winnerCar?.id === carB.id ? 'text-emerald-400' : 'text-rose-400'
+            }`}>
               🥊 Desafiante B (Player 2)
+              {winnerCar?.id === carB.id && (
+                <span className="bg-emerald-500/20 text-emerald-400 text-[10px] px-2 py-0.5 rounded-full border border-emerald-500/30 font-bold ml-1">
+                  Vencedor ({scoreB} rounds)
+                </span>
+              )}
             </span>
             <VerdictBadge badge={carB.results.verdictBadge} size="sm" showLabel={false} />
           </div>
@@ -364,7 +394,9 @@ Gerado pelo app *Carrão do Lucão* 🚀
                   <div
                     className={`p-2.5 rounded-lg border flex items-center justify-between transition-all ${
                       isWinnerA
-                        ? 'bg-blue-950/40 border-blue-500 text-blue-300 font-bold shadow-sm'
+                        ? 'bg-emerald-950/40 border-emerald-500 text-emerald-300 font-bold shadow-sm shadow-emerald-950/30 ring-1 ring-emerald-500/30'
+                        : isWinnerB
+                        ? 'bg-slate-950/60 border-slate-800/80 text-slate-500 opacity-60'
                         : 'bg-slate-950 border-slate-800/80 text-slate-400'
                     }`}
                   >
@@ -372,10 +404,12 @@ Gerado pelo app *Carrão do Lucão* 🚀
                       <span className="text-[10px] block opacity-75 truncate max-w-[120px] sm:max-w-[180px]">
                         {carA.title}
                       </span>
-                      <span className="text-sm font-bold text-white">{round.valueA}</span>
+                      <span className={`text-sm font-bold ${isWinnerA ? 'text-white' : 'text-slate-300'}`}>
+                        {round.valueA}
+                      </span>
                     </div>
                     {isWinnerA && (
-                      <span className="text-[10px] bg-blue-500 text-slate-950 px-1.5 py-0.5 rounded font-black shrink-0">
+                      <span className="text-[10px] bg-emerald-500 text-slate-950 px-2 py-0.5 rounded font-black shrink-0 shadow-sm shadow-emerald-950/50">
                         Venceu
                       </span>
                     )}
@@ -385,7 +419,9 @@ Gerado pelo app *Carrão do Lucão* 🚀
                   <div
                     className={`p-2.5 rounded-lg border flex items-center justify-between transition-all ${
                       isWinnerB
-                        ? 'bg-rose-950/40 border-rose-500 text-rose-300 font-bold shadow-sm'
+                        ? 'bg-emerald-950/40 border-emerald-500 text-emerald-300 font-bold shadow-sm shadow-emerald-950/30 ring-1 ring-emerald-500/30'
+                        : isWinnerA
+                        ? 'bg-slate-950/60 border-slate-800/80 text-slate-500 opacity-60'
                         : 'bg-slate-950 border-slate-800/80 text-slate-400'
                     }`}
                   >
@@ -393,10 +429,12 @@ Gerado pelo app *Carrão do Lucão* 🚀
                       <span className="text-[10px] block opacity-75 truncate max-w-[120px] sm:max-w-[180px]">
                         {carB.title}
                       </span>
-                      <span className="text-sm font-bold text-white">{round.valueB}</span>
+                      <span className={`text-sm font-bold ${isWinnerB ? 'text-white' : 'text-slate-300'}`}>
+                        {round.valueB}
+                      </span>
                     </div>
                     {isWinnerB && (
-                      <span className="text-[10px] bg-rose-500 text-slate-950 px-1.5 py-0.5 rounded font-black shrink-0">
+                      <span className="text-[10px] bg-emerald-500 text-slate-950 px-2 py-0.5 rounded font-black shrink-0 shadow-sm shadow-emerald-950/50">
                         Venceu
                       </span>
                     )}
