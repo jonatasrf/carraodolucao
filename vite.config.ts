@@ -5,6 +5,6 @@ import { defineConfig } from 'vite'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  base: './',
+  base: process.env.GITHUB_ACTIONS ? '/carraodolucao/' : './',
 })
 
