@@ -22,13 +22,13 @@ export const AntiGolpeTips: React.FC = () => {
   return (
     <div className="space-y-6 max-w-4xl mx-auto pb-24 sm:pb-12">
       {/* Header */}
-      <div className="p-5 rounded-2xl bg-gradient-to-r from-amber-950/60 to-slate-900 border border-amber-800/40 shadow-xl space-y-2">
+      <div className="p-5 rounded-2xl bg-gradient-to-r from-blue-950/60 via-slate-900 to-amber-950/40 border border-blue-800/40 shadow-xl space-y-2">
         <div className="flex items-center gap-2 text-amber-400 font-black text-lg">
           <Lightbulb size={24} />
-          <span>Manual de Sobrevivência do Lucão na Concessionária</span>
+          <span>Manual de Sobrevivência do Engenheiro Lucão na Concessionária</span>
         </div>
         <p className="text-sm text-slate-300 leading-relaxed">
-          Vendedor de carro é treinado para fazer qualquer conta parecer vantajosa na lábia. Aqui estão as 5 regras de ouro para você não deixar seu dinheiro suado na mão de banqueiro e lojista malandro.
+          Você calcula torque, tolerância de mancais e dimensionamento de chassi na LS Tractor, toca guitarra com a distorção no 12 e já zerou boss no Dark Souls. Não vai ser um vendedor de seminovos que vai te passar a perna com juros de agiota! Siga o manual anti-loss:
         </p>
       </div>
 
@@ -70,15 +70,15 @@ export const AntiGolpeTips: React.FC = () => {
           </li>
           <li className="flex items-start gap-2">
             <span className="text-emerald-400 font-bold">✓</span>
-            <span>Verificar na proposta se adicionaram tarifas opcionais como seguro de perda e roubo, assistência 24h ou seguro prestamista.</span>
+            <span>Verificar se embutiram tarifas opcionais como seguro prestamista (a DLC abusiva do financiamento).</span>
           </li>
           <li className="flex items-start gap-2">
             <span className="text-emerald-400 font-bold">✓</span>
-            <span>Conferir se a taxa de abertura de crédito (TAC) ou taxa de cadastro não ultrapassa valores razoáveis do mercado.</span>
+            <span>Conferir se o juros acumulado não dava pra comprar uma <strong>Gibson Les Paul</strong> ou um <strong>setup com RTX 5090</strong>.</span>
           </li>
           <li className="flex items-start gap-2">
             <span className="text-emerald-400 font-bold">✓</span>
-            <span>Colocar a proposta aqui no <strong>Carrão do Lucão</strong> para ver se o simulador dá sinal verde ou alerta de agiota!</span>
+            <span>Colocar a proposta aqui no <strong>Carrão do Lucão</strong> para ver se o veredicto dá <em>Selo Engenharia LS</em> ou <em>YOU DIED</em>!</span>
           </li>
         </ul>
       </div>
