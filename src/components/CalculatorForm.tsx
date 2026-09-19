@@ -13,7 +13,7 @@ import {
   Flame,
   ArrowRight,
   Zap,
-  Sparkles
+  Gift
 } from 'lucide-react';
 import type { 
   CalculationMode, 
@@ -28,6 +28,7 @@ import {
 } from '../utils/finance';
 import { formatCurrency, formatPercent, generateWhatsAppSummary } from '../utils/formatters';
 import { VerdictBadge } from './VerdictBadge';
+import { SmartTipsRadar, type TipCategory } from './SmartTipsRadar';
 
 interface CalculatorFormProps {
   onSaveScenario: (scenario: Scenario) => void;
@@ -52,6 +53,9 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
 
   // Dynamic calculation tracking: strictly between installment and monthlyRate
   const [autoCalculated, setAutoCalculated] = useState<AutoCalculatedField>('installment');
+
+  // Real-time contextual tips category
+  const [activeTipCategory, setActiveTipCategory] = useState<TipCategory>('taxa');
 
   // Trade-in car
   const [tradeInCar, setTradeInCar] = useState<TradeInCar>({
@@ -111,6 +115,7 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
   // Reactive handler: Car Price changed (user typed a new car price)
   const handleCarPriceChange = (newPrice: number) => {
     setCarPrice(newPrice);
+    setActiveTipCategory('preco');
 
     const { totalDown, financedExtras } = getDownAndExtras(cashDownPayment, tradeInCar, additionalCosts);
     const pv = Math.max(0, newPrice - totalDown + financedExtras);
@@ -128,6 +133,7 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
   const handleInstallmentChange = (newInstallment: number) => {
     setInstallment(newInstallment);
     setAutoCalculated('monthlyRate');
+    setActiveTipCategory('taxa');
 
     const { totalDown, financedExtras } = getDownAndExtras(cashDownPayment, tradeInCar, additionalCosts);
     const pv = Math.max(0, carPrice - totalDown + financedExtras);
@@ -139,6 +145,7 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
   const handleMonthlyRateChange = (newRate: number) => {
     setMonthlyRate(newRate);
     setAutoCalculated('installment');
+    setActiveTipCategory('taxa');
 
     const { totalDown, financedExtras } = getDownAndExtras(cashDownPayment, tradeInCar, additionalCosts);
     const pv = Math.max(0, carPrice - totalDown + financedExtras);
@@ -177,6 +184,7 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
   // Reactive handler: Trade-in changed
   const handleTradeInChange = (newTradeIn: TradeInCar) => {
     setTradeInCar(newTradeIn);
+    setActiveTipCategory('troca');
     const { totalDown, financedExtras } = getDownAndExtras(cashDownPayment, newTradeIn, additionalCosts);
     const pv = Math.max(0, carPrice - totalDown + financedExtras);
 
@@ -269,18 +277,26 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
 
   return (
     <div className="space-y-4 max-w-4xl mx-auto pb-24 sm:pb-8">
-      {/* Dynamic Interaction Hint Banner */}
-      <div className="p-3 bg-gradient-to-r from-amber-500/10 via-slate-900 to-slate-900 rounded-2xl border border-amber-500/30 flex items-center justify-between gap-2 shadow-lg">
-        <div className="flex items-center gap-2 text-xs text-slate-200">
-          <Sparkles className="w-4 h-4 text-amber-400 shrink-0 animate-pulse" />
-          <span>
-            <strong>Simulador Inteligente:</strong> edite a Parcela para descobrir a Taxa Real do banco, ou altere a Taxa para calcular a Parcela. O <strong>Valor do Carro</strong> permanece sempre fixo conforme sua escolha!
-          </span>
-        </div>
-        <div className="hidden sm:flex items-center gap-1.5 shrink-0 text-[11px] font-bold text-amber-300 bg-amber-500/15 px-2 py-0.5 rounded-full border border-amber-500/30">
-          <Zap size={12} />
-          <span>Calculando: {autoCalculated === 'installment' ? 'Parcela' : 'Taxa de Juros Real'}</span>
-        </div>
+      {/* Smart Cost-Benefit Negotiation Radar (Fixed Height: Zero Layout Shifts) */}
+      <SmartTipsRadar
+        carPrice={carPrice}
+        monthlyRate={results.effectiveMonthlyRate}
+        installment={results.monthlyInstallment}
+        totalFinanced={results.totalFinanced}
+        termMonths={termMonths}
+        tradeInCar={tradeInCar}
+        tradeInLoss={results.tradeInLossVsFipe}
+        activeCategory={activeTipCategory}
+        onSelectCategory={setActiveTipCategory}
+      />
+
+      {/* Reactive Calculation Subtitle Banner */}
+      <div className="px-3.5 py-1.5 bg-slate-950/70 rounded-xl border border-slate-800 flex items-center justify-between text-xs text-slate-400">
+        <span className="flex items-center gap-1.5">
+          <Zap size={13} className="text-amber-400" />
+          <span>Calculando em tempo real: <strong className="text-white">{autoCalculated === 'installment' ? 'Valor da Parcela' : 'Taxa de Juros Real (Newton-Raphson)'}</strong></span>
+        </span>
+        <span className="text-[11px] text-slate-500 hidden sm:inline">Valor do Carro é a âncora fixa</span>
       </div>
 
       {/* Main Form Layout */}
@@ -324,12 +340,20 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
                   <Car className="w-4 h-4 text-amber-400" />
                   Valor do Carro Novo (R$)
                 </label>
+                <button
+                  type="button"
+                  onClick={() => setActiveTipCategory('preco')}
+                  className="text-[11px] text-amber-400 hover:text-amber-300 font-semibold cursor-pointer"
+                >
+                  Ver desconto da loja & FIPE →
+                </button>
               </div>
               <div className="relative">
                 <input
                   type="number"
                   inputMode="decimal"
                   value={carPrice || ''}
+                  onFocus={() => setActiveTipCategory('preco')}
                   onChange={(e) => handleCarPriceChange(parseFloat(e.target.value) || 0)}
                   placeholder="100000"
                   className="w-full bg-slate-950 border border-slate-700/80 focus:border-amber-500 rounded-xl px-4 py-2.5 text-lg font-bold text-white focus:outline-none transition-all"
@@ -490,17 +514,27 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
                     <Percent className="w-3.5 h-3.5 text-amber-400" />
                     Taxa de Juros (% a.m.)
                   </label>
-                  {autoCalculated === 'monthlyRate' && (
-                    <span className="text-[10px] font-bold text-amber-400 bg-amber-500/15 px-1.5 py-0.5 rounded border border-amber-500/30 flex items-center gap-1">
-                      <Zap size={10} /> Calculado
-                    </span>
-                  )}
+                  <div className="flex items-center gap-1.5">
+                    {autoCalculated === 'monthlyRate' && (
+                      <span className="text-[10px] font-bold text-amber-400 bg-amber-500/15 px-1.5 py-0.5 rounded border border-amber-500/30 flex items-center gap-1">
+                        <Zap size={10} /> Calculado
+                      </span>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => setActiveTipCategory('taxa')}
+                      className="text-[10px] text-amber-400 hover:text-amber-300 font-semibold cursor-pointer"
+                    >
+                      Média Bacen →
+                    </button>
+                  </div>
                 </div>
                 <input
                   type="number"
                   step="0.01"
                   inputMode="decimal"
                   value={monthlyRate || ''}
+                  onFocus={() => setActiveTipCategory('taxa')}
                   onChange={(e) => handleMonthlyRateChange(parseFloat(e.target.value) || 0)}
                   placeholder="1.79"
                   className={`w-full bg-slate-950 border rounded-xl px-3.5 py-2.5 text-sm font-bold text-white focus:outline-none transition-all ${
@@ -521,17 +555,27 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
                     <Coins className="w-3.5 h-3.5 text-amber-400" />
                     Valor da Parcela (R$)
                   </label>
-                  {autoCalculated === 'installment' && (
-                    <span className="text-[10px] font-bold text-amber-400 bg-amber-500/15 px-1.5 py-0.5 rounded border border-amber-500/30 flex items-center gap-1">
-                      <Zap size={10} /> Calculado
-                    </span>
-                  )}
+                  <div className="flex items-center gap-1.5">
+                    {autoCalculated === 'installment' && (
+                      <span className="text-[10px] font-bold text-amber-400 bg-amber-500/15 px-1.5 py-0.5 rounded border border-amber-500/30 flex items-center gap-1">
+                        <Zap size={10} /> Calculado
+                      </span>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => setActiveTipCategory('taxa')}
+                      className="text-[10px] text-amber-400 hover:text-amber-300 font-semibold cursor-pointer"
+                    >
+                      Ver economia →
+                    </button>
+                  </div>
                 </div>
                 <input
                   type="number"
                   step="1"
                   inputMode="decimal"
                   value={installment || ''}
+                  onFocus={() => setActiveTipCategory('taxa')}
                   onChange={(e) => handleInstallmentChange(parseFloat(e.target.value) || 0)}
                   placeholder="2190"
                   className={`w-full bg-slate-950 border rounded-xl px-3.5 py-2.5 text-sm font-bold text-white focus:outline-none transition-all ${
@@ -713,8 +757,21 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
               </div>
             </div>
 
+            {/* Quick Brindes Tip Button */}
+            <button
+              type="button"
+              onClick={() => setActiveTipCategory('brindes')}
+              className="w-full flex items-center justify-between p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 hover:border-amber-500/40 text-xs text-slate-300 hover:text-white transition-all cursor-pointer shadow-sm group"
+            >
+              <span className="flex items-center gap-2 font-medium">
+                <Gift size={15} className="text-amber-400 group-hover:scale-110 transition-transform" />
+                <span>Vai fechar negócio? <strong>Exija os brindes!</strong></span>
+              </span>
+              <span className="text-[11px] font-bold text-amber-400 group-hover:translate-x-0.5 transition-transform">Ver lista →</span>
+            </button>
+
             {/* Action Buttons */}
-            <div className="space-y-2 pt-2">
+            <div className="space-y-2 pt-1">
               <button
                 type="button"
                 onClick={handleSave}
