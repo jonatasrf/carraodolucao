@@ -35,7 +35,7 @@ export function generateHumorVerdict(params: {
     return {
       badge: 'agiota',
       title: '🚨 5 ESTRELAS NO GTA: YOU DIED & TRABALHO NOS CORREIOS DO DEATH STRANDING',
-      roast: `LUCÃO, ISSO É ASSALTO COM 5 ESTRELAS DE POLÍCIA NO GTA! Com R$ ${Math.round(totalInterestPaid).toLocaleString('pt-BR')} SÓ DE JUROS, você tomou uma lâmina oculta nas costas do Assassin's Creed! Com essa dívida você vai ter que pedir emprego nos Correios igual no Death Stranding, onde o cara só anda levando caixa e encomenda nas costas o dia inteiro pra conseguir pagar o boleto! Nem a potência hidráulica de um trator da LS Tractor puxa esse carnê!`,
+      roast: `LUCÃO, ISSO É ASSALTO COM 5 ESTRELAS DE POLÍCIA NO GTA! Com R$ ${Math.round(totalInterestPaid).toLocaleString('pt-BR')} SÓ DE JUROS, você tomou uma lâmina oculta nas costas do Assassin's Creed! Com essa dívida você vai ter que pedir emprego nos Correios igual no Death Stranding, onde o cara só anda levando caixa e encomenda nas costas o dia inteiro pra conseguir pagar o boleto! Nem o agiota mais perigoso de Los Santos cobraria uma taxa dessas!`,
       advice: 'Dá respawn na bonfire e foge! O vendedor te deu uma facada furtiva do Assassin\'s Creed. Não assine isso nem sob hipnose!'
     };
   }
@@ -46,7 +46,7 @@ export function generateHumorVerdict(params: {
       badge: 'perigo',
       title: '⚠️ TIRO DE PURPURINA DO FORTNITE & CARTEIRO DO DEATH STRANDING',
       roast: `Cuidado, Lucão! Essa proposta da concessionária é igualzinha arma de Fortnite: cheia de gracinha, soltando tiro de purpurina e confete na sua cara, mas na verdade mais de ${Math.round(interestPercentageOfCar)}% do valor do carro é juros puro pro banqueiro! Se assinar isso, você vai virar CLT dos Correios no Death Stranding, passando os próximos anos andando a pé com 200kg de pacote nas costas pra pagar o banco.`,
-      advice: 'O vendedor tá achando que engenheiro da LS Tractor cai em tiro de purpurina. Exija cortar essa taxa ou aumente a entrada pra escapar desse grind eterno!'
+      advice: 'O vendedor tá achando que você cai em tiro de purpurina do Fortnite. Exija cortar essa taxa ou aumente a entrada pra escapar desse grind eterno!'
     };
   }
 
@@ -62,8 +62,8 @@ export function generateHumorVerdict(params: {
     return {
       badge: 'alerta',
       title: '👀 LÂMINA OCULTA DO ASSASSIN\'S CREED & PURPURINA DO FORTNITE',
-      roast: `Dá pra rodar, mas tem golpe camuflado no contrato.${specificComment} O vendedor veio com aquela conversa mole cheia de tiro de purpurina do Fortnite, mas escondeu taxas no modo stealth do Assassin's Creed como se engenheiro da LS não soubesse ler planilha.`,
-      advice: 'Use sua visão de águia de engenheiro: mande cortar fora o seguro prestamista e a TAC antes de dar esse salto de fé no escuro.'
+      roast: `Dá pra rodar, mas tem golpe camuflado no contrato.${specificComment} O vendedor veio com aquela conversa mole cheia de tiro de purpurina do Fortnite, mas escondeu taxas no modo stealth do Assassin's Creed achando que você não sabe fazer conta.`,
+      advice: 'Use sua visão de águia do Assassin\'s Creed: mande cortar fora o seguro prestamista e a TAC antes de dar esse salto de fé no escuro.'
     };
   }
 
@@ -71,14 +71,14 @@ export function generateHumorVerdict(params: {
   if (lossScore >= 25) {
     let tradeInComment = '';
     if (tradeInCar.enabled && tradeInLossVsFipe > 5000) {
-      tradeInComment = ` Só fica esperto que a loja desvalorizou seu usado em R$ ${Math.round(tradeInLossVsFipe).toLocaleString('pt-BR')} abaixo da FIPE. Trataram seu carro como se tivesse puxado arado em terra vermelha na fábrica da LS!`;
+      tradeInComment = ` Só fica esperto que a loja desvalorizou seu usado em R$ ${Math.round(tradeInLossVsFipe).toLocaleString('pt-BR')} abaixo da FIPE. Trataram seu carro como sucata de Los Santos!`;
     }
 
     return {
       badge: 'razoavel',
       title: '⚖️ MISSÃO DO GTA CONCLUÍDA & SEM CARGA DO DEATH STRANDING',
-      roast: `Proposta dentro da tolerância mecânica, Lucão! Sem perseguição policial de Los Santos no GTA e sem você precisar virar entregador dos Correios no Death Stranding carregando peso a pé. O trator da LS roda suave e o carro sai afinado!${tradeInComment}`,
-      advice: 'Tenta chorar um IPVA de brinde ou revisão grátis. Um choro bem dado na concessionária é igual acertar o timing do solo de guitarra: muda o jogo!'
+      roast: `Proposta honesta, Lucão! Sem perseguição policial de Los Santos no GTA e sem você precisar virar entregador dos Correios no Death Stranding carregando peso a pé. O carro sai pronto pra rodar!${tradeInComment}`,
+      advice: 'Tenta chorar um IPVA de brinde ou primeira revisão grátis na concessionária. Um choro bem dado na negociação é igual acertar o headshot: resolve na hora!'
     };
   }
 
@@ -86,7 +86,7 @@ export function generateHumorVerdict(params: {
   return {
     badge: 'excelente',
     title: '🏆 CLUTCH 1v5 NO GTA & SALTO DE FÉ DO ASSASSIN\'S CREED',
-    roast: `AÍ SIM, LUCÃO! Você deu um tiro certeiro sem purpurina de Fortnite e cravou um salto de fé perfeito do Assassin's Creed direto no melhor negócio! Taxa de juros de pai pra filho (${monthlyRate.toFixed(2)}% a.m.), zero peso de Death Stranding nas costas e engenharia da LS Tractor 100% aprovada no controle de qualidade!`,
+    roast: `AÍ SIM, LUCÃO! Você deu um tiro certeiro sem purpurina de Fortnite e cravou um salto de fé perfeito do Assassin's Creed direto no melhor negócio! Taxa de juros de pai pra filho (${monthlyRate.toFixed(2)}% a.m.), zero peso de Death Stranding nas costas e conta 100% aprovada sem loss!`,
     advice: 'Fecha logo antes que o gerente do banco perceba que tomou um golpe de mestre do GTA e cancele essa proposta dos deuses!'
   };
 }
@@ -102,7 +102,7 @@ export const FUNNY_PRESETS = [
     notes: 'Vendedor jurou que a parcela cabe no bolso com tiro de purpurina do Fortnite. Na prática, você vai ter que trabalhar nos Correios igual no Death Stranding levando 300kg de caixa a pé pra conseguir pagar.',
     tradeInCar: {
       enabled: true,
-      carName: 'Celta 2012 Guerreiro da Fábrica',
+      carName: 'Celta 2012 Guerreiro',
       fipeValue: 24000,
       offeredValue: 17000,
       debt: 0
@@ -116,7 +116,7 @@ export const FUNNY_PRESETS = [
     }
   },
   {
-    title: 'Corolla do Assassino Furtivo (Salto de Fé da LS Tractor)',
+    title: 'Corolla do Assassino Furtivo (Salto de Fé do Lucão)',
     carPrice: 128000,
     cashDownPayment: 60000,
     termMonths: 24,
@@ -125,7 +125,7 @@ export const FUNNY_PRESETS = [
     notes: 'Lucas usou a visão de águia do Assassin\'s Creed, desarmou as lâminas ocultas das taxas e pegou taxa subsidiada sem precisar fazer hora extra nos Correios do Death Stranding.',
     tradeInCar: {
       enabled: true,
-      carName: 'HB20 2018 Conservado no Estacionamento da LS',
+      carName: 'HB20 2018 Conservado',
       fipeValue: 52000,
       offeredValue: 47000,
       debt: 0
@@ -177,7 +177,7 @@ export const ANTI_GOLPE_TIPS = [
   {
     icon: 'Car',
     title: 'A Lâmina Oculta do Assassin\'s Creed no Rodapé do Contrato',
-    description: 'Seguro prestamista e tarifas opcionais são a lâmina oculta do vendedor: enquanto ele elogia seu gosto automotivo ou pergunta do seu trator na LS, ele te esfaqueia pelas costas com R$ 3.000 em taxas disfarçadas. Exija retirar tudo!'
+    description: 'Seguro prestamista e tarifas opcionais são a lâmina oculta do vendedor: enquanto ele elogia seu bom gosto no carro, te esfaqueia pelas costas com R$ 3.000 em taxas disfarçadas. Exija retirar tudo!'
   },
   {
     icon: 'Calendar',
@@ -186,7 +186,7 @@ export const ANTI_GOLPE_TIPS = [
   },
   {
     icon: 'FileText',
-    title: 'Engenharia LS Tractor: Tolerância Zero para TAC e Despachante',
-    description: 'Na engenharia da LS Tractor, projeto com folga errada é reprovado na hora. Faça o mesmo no banco: não engula taxa de cadastro de R$ 1.800 como se estivessem reprogramando a injeção eletrônica do trator.'
+    title: 'Visão de Águia do Lucão: Tolerância Zero para TAC e Despachante',
+    description: 'No jogo da negociação, tarifa embutida sem explicação é golpe. Não engula taxa de cadastro de R$ 1.800 nem despachante superfaturado como se estivesse tunando carro na Los Santos Customs do GTA.'
   }
 ];

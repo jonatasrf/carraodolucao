@@ -56,4 +56,5 @@ export interface Scenario {
   createdAt: string;
 }
 
-export type ActiveTab = 'calculator' | 'compare' | 'ranking' | 'tips';
+export type ActiveTab = 'calculator' | 'duelo' | 'compare' | 'ranking' | 'tips';
+

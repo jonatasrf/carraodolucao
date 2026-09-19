@@ -22,13 +22,13 @@ export const AntiGolpeTips: React.FC = () => {
   return (
     <div className="space-y-6 max-w-4xl mx-auto pb-24 sm:pb-12">
       {/* Header */}
-      <div className="p-5 rounded-2xl bg-gradient-to-r from-blue-950/60 via-slate-900 to-amber-950/40 border border-blue-800/40 shadow-xl space-y-2">
+      <div className="p-5 rounded-2xl bg-gradient-to-r from-purple-950/60 via-slate-900 to-amber-950/40 border border-purple-800/40 shadow-xl space-y-2">
         <div className="flex items-center gap-2 text-amber-400 font-black text-lg">
           <Lightbulb size={24} />
-          <span>Manual de Sobrevivência do Engenheiro Lucão na Concessionária</span>
+          <span>Manual de Sobrevivência Gamer do Lucão na Concessionária</span>
         </div>
         <p className="text-sm text-slate-300 leading-relaxed">
-          Você calcula torque, tolerância de mancais e dimensionamento de chassi na LS Tractor, toca guitarra com a distorção no 12 e já zerou boss no Dark Souls. Não vai ser um vendedor de seminovos que vai te passar a perna com juros de agiota! Siga o manual anti-loss:
+          Você já zerou boss no Dark Souls, já fugiu da polícia com 5 estrelas no GTA e sabe que tiro de purpurina do Fortnite não dá dano de verdade. Não vai ser um vendedor de seminovos com conversa fiada que vai te passar a perna com juros de agiota! Siga o manual anti-loss:
         </p>
       </div>
 
@@ -74,11 +74,11 @@ export const AntiGolpeTips: React.FC = () => {
           </li>
           <li className="flex items-start gap-2">
             <span className="text-emerald-400 font-bold">✓</span>
-            <span>Conferir se o juros acumulado não dava pra comprar uma <strong>Gibson Les Paul</strong> ou um <strong>setup com RTX 5090</strong>.</span>
+            <span>Conferir se o juros acumulado não dava pra comprar um <strong>setup completo com PS5 Pro e PC Gamer</strong>.</span>
           </li>
           <li className="flex items-start gap-2">
             <span className="text-emerald-400 font-bold">✓</span>
-            <span>Colocar a proposta aqui no <strong>Carrão do Lucão</strong> para ver se o veredicto dá <em>Selo Engenharia LS</em> ou <em>YOU DIED</em>!</span>
+            <span>Colocar a proposta aqui no <strong>Carrão do Lucão</strong> para ver se o veredicto dá <em>Salto de Fé</em> ou <em>5 Estrelas no GTA</em>!</span>
           </li>
         </ul>
       </div>

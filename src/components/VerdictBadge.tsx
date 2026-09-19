@@ -11,8 +11,8 @@ interface Props {
 export const VerdictBadge: React.FC<Props> = ({ badge, size = 'md', showLabel = true }) => {
   const configs = {
     excelente: {
-      label: 'Selo Engenharia LS',
-      sub: 'Salto de Fé do Assassin\'s Creed',
+      label: 'Salto de Fé do Lucão',
+      sub: 'Assassin\'s Creed / Aprovado',
       color: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
       icon: Award,
     },

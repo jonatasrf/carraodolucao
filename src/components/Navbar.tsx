@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calculator, Layers, Trophy, Lightbulb } from 'lucide-react';
+import { Calculator, Swords, Layers, Trophy, Lightbulb } from 'lucide-react';
 import type { ActiveTab } from '../types';
 
 interface NavbarProps {
@@ -15,6 +15,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const navItems: { id: ActiveTab; label: string; icon: React.ElementType; badge?: number }[] = [
     { id: 'calculator', label: 'Simulador', icon: Calculator },
+    { id: 'duelo', label: 'Duelo X1', icon: Swords },
     { id: 'compare', label: 'Comparador', icon: Layers, badge: scenariosCount },
     { id: 'ranking', label: 'Ranking', icon: Trophy },
     { id: 'tips', label: 'Anti-Golpe', icon: Lightbulb },

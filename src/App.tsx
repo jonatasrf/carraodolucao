@@ -8,6 +8,7 @@ import { RankingTable } from './components/RankingTable';
 import { AntiGolpeTips } from './components/AntiGolpeTips';
 import { PresetsModal } from './components/PresetsModal';
 import { ShareModal } from './components/ShareModal';
+import { DueloX1 } from './components/DueloX1';
 import { FUNNY_PRESETS } from './utils/humor';
 import { computeScenarioResults } from './utils/finance';
 
@@ -151,6 +152,14 @@ export const App: React.FC = () => {
           <CalculatorForm
             onSaveScenario={handleSaveScenario}
             initialScenario={editingScenario}
+          />
+        )}
+
+        {activeTab === 'duelo' && (
+          <DueloX1
+            scenarios={scenarios}
+            onNewScenario={handleNewScenario}
+            onLoadPresets={() => setIsPresetsOpen(true)}
           />
         )}
 
