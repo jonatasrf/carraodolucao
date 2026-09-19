@@ -31,12 +31,12 @@ export const Header: React.FC<HeaderProps> = ({
                 <h1 className="text-lg sm:text-xl font-black tracking-tight text-white m-0 flex items-center gap-1.5">
                   Carrão do Lucão
                 </h1>
-                <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/30">
-                  LS Tractor Eng. 🚜
+                <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                  Simulador Anti-Loss
                 </span>
               </div>
               <p className="text-xs text-slate-400 font-medium hidden sm:block">
-                Engenharia LS Tractor 🚜 • Rock & Solo de Guitarra 🎸 • Anti-Loss dos Games 🎮
+                Simulador de Compra, Financiamento & Caçador de Bom Negócio
               </p>
             </div>
           </div>
