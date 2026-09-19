@@ -155,44 +155,47 @@ export const AntiGolpeTips: React.FC = () => {
       </div>
 
       {/* Sub-navigation Tabs */}
-      <div className="flex items-center gap-1.5 p-1.5 bg-slate-900/90 rounded-2xl border border-slate-800 shadow-lg overflow-x-auto">
+      <div className="flex items-center gap-1.5 p-1.5 bg-slate-900/90 rounded-2xl border border-slate-800 shadow-lg overflow-x-auto scrollbar-none">
         <button
           type="button"
           onClick={() => setActiveSubTab('psicologia')}
-          className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
+          className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-2.5 sm:px-3 rounded-xl text-xs font-bold transition-all shrink-0 sm:shrink cursor-pointer ${
             activeSubTab === 'psicologia'
               ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/25'
               : 'text-slate-400 hover:text-white hover:bg-slate-800'
           }`}
         >
-          <Brain size={16} />
-          <span>🧠 Psicologia do Vendedor</span>
+          <Brain size={16} className="shrink-0" />
+          <span className="hidden sm:inline">Psicologia do Vendedor</span>
+          <span className="sm:hidden">Psicologia</span>
         </button>
 
         <button
           type="button"
           onClick={() => setActiveSubTab('perguntas')}
-          className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
+          className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-2.5 sm:px-3 rounded-xl text-xs font-bold transition-all shrink-0 sm:shrink cursor-pointer ${
             activeSubTab === 'perguntas'
               ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/25'
               : 'text-slate-400 hover:text-white hover:bg-slate-800'
           }`}
         >
-          <Target size={16} />
-          <span>🎯 Perguntas Letais</span>
+          <Target size={16} className="shrink-0" />
+          <span className="hidden sm:inline">Perguntas Letais</span>
+          <span className="sm:hidden">Perguntas</span>
         </button>
 
         <button
           type="button"
           onClick={() => setActiveSubTab('financeiro')}
-          className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer ${
+          className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 px-2.5 sm:px-3 rounded-xl text-xs font-bold transition-all shrink-0 sm:shrink cursor-pointer ${
             activeSubTab === 'financeiro'
               ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/25'
               : 'text-slate-400 hover:text-white hover:bg-slate-800'
           }`}
         >
-          <ShieldAlert size={16} />
-          <span>🛡️ Tarifas & Golpes</span>
+          <ShieldAlert size={16} className="shrink-0" />
+          <span className="hidden sm:inline">Tarifas & Golpes</span>
+          <span className="sm:hidden">Tarifas</span>
         </button>
       </div>
 
@@ -286,12 +289,12 @@ export const AntiGolpeTips: React.FC = () => {
                 key={q.id}
                 className="p-4 sm:p-5 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-rose-500/40 transition-all shadow-xl space-y-3"
               >
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 min-w-0">
                     <span className="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 font-black text-xs flex items-center justify-center border border-rose-500/30 shrink-0">
                       {q.id}
                     </span>
-                    <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-400 truncate">
                       Foco: {q.category}
                     </span>
                   </div>
@@ -299,7 +302,7 @@ export const AntiGolpeTips: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => handleCopyQuestion(q.id, q.question)}
-                    className="flex items-center gap-1.5 py-1 px-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-semibold border border-slate-700 active:scale-95 transition-all w-fit cursor-pointer"
+                    className="flex items-center gap-1.5 py-1 px-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-semibold border border-slate-700 active:scale-95 transition-all w-fit cursor-pointer shrink-0"
                   >
                     {copiedId === q.id ? (
                       <>

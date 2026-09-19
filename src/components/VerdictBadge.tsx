@@ -59,11 +59,11 @@ export const VerdictBadge: React.FC<Props> = ({ badge, size = 'md', showLabel = 
 
   return (
     <div 
-      className={`inline-flex items-center font-semibold rounded-full border shadow-sm transition-all ${config.color} ${sizeClasses[size]}`}
+      className={`inline-flex items-center font-semibold rounded-full border shadow-sm transition-all whitespace-nowrap shrink-0 ${config.color} ${sizeClasses[size]}`}
     >
       <IconComponent size={iconSizes[size]} className="shrink-0" />
       {showLabel && (
-        <span className="tracking-wide">
+        <span className="tracking-wide whitespace-nowrap">
           {config.label}
         </span>
       )}

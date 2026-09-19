@@ -70,12 +70,12 @@ export const ScenarioCard: React.FC<ScenarioCardProps> = ({
       <div className="p-4 sm:p-5 space-y-4">
         {/* Header: Title & Badges */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <div>
-            <h3 className="text-base sm:text-lg font-black text-white tracking-tight">
+          <div className="min-w-0">
+            <h3 className="text-base sm:text-lg font-black text-white tracking-tight truncate" title={scenario.title}>
               {scenario.title}
             </h3>
             {scenario.dealership && (
-              <span className="text-xs text-slate-400 font-medium">
+              <span className="text-xs text-slate-400 font-medium truncate block">
                 {scenario.dealership}
               </span>
             )}
@@ -85,40 +85,40 @@ export const ScenarioCard: React.FC<ScenarioCardProps> = ({
 
         {/* Hero Numbers */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-slate-950/70 p-3 rounded-xl border border-slate-800/80">
-          <div>
-            <span className="text-[11px] text-slate-400 block">Parcela Mensal</span>
-            <span className="text-base font-black text-amber-400">
+          <div className="min-w-0">
+            <span className="text-[11px] text-slate-400 block truncate">Parcela Mensal</span>
+            <span className="text-base font-black text-amber-400 block truncate" title={formatCurrency(results.monthlyInstallment)}>
               {formatCurrency(results.monthlyInstallment)}
             </span>
-            <span className="text-[10px] text-slate-400 block">{scenario.termMonths}x meses</span>
+            <span className="text-[10px] text-slate-400 block truncate">{scenario.termMonths}x meses</span>
           </div>
 
-          <div>
-            <span className="text-[11px] text-slate-400 block">Preço do Carro</span>
-            <span className="text-sm font-bold text-white">
+          <div className="min-w-0">
+            <span className="text-[11px] text-slate-400 block truncate">Preço do Carro</span>
+            <span className="text-sm font-bold text-white block truncate" title={formatCurrency(scenario.carPrice)}>
               {formatCurrency(scenario.carPrice)}
             </span>
-            <span className="text-[10px] text-slate-400 block">
+            <span className="text-[10px] text-slate-400 block truncate">
               Entrada: {formatCurrency(results.totalDownPayment)}
             </span>
           </div>
 
-          <div>
-            <span className="text-[11px] text-slate-400 block">Juros Pagos</span>
-            <span className="text-sm font-bold text-rose-400">
+          <div className="min-w-0">
+            <span className="text-[11px] text-slate-400 block truncate">Juros Pagos</span>
+            <span className="text-sm font-bold text-rose-400 block truncate" title={formatCurrency(results.totalInterestPaid)}>
               {formatCurrency(results.totalInterestPaid)}
             </span>
-            <span className="text-[10px] text-slate-400 block">
+            <span className="text-[10px] text-slate-400 block truncate">
               +{formatPercent(results.interestPercentageOfCar)}
             </span>
           </div>
 
-          <div>
-            <span className="text-[11px] text-slate-400 block">Custo Total Final</span>
-            <span className="text-sm font-bold text-amber-300">
+          <div className="min-w-0">
+            <span className="text-[11px] text-slate-400 block truncate">Custo Total Final</span>
+            <span className="text-sm font-bold text-amber-300 block truncate" title={formatCurrency(results.totalFinalCost)}>
               {formatCurrency(results.totalFinalCost)}
             </span>
-            <span className="text-[10px] text-slate-400 block">
+            <span className="text-[10px] text-slate-400 block truncate">
               CET: {formatPercent(results.effectiveMonthlyRate)} a.m.
             </span>
           </div>

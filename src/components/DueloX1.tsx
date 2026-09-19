@@ -392,7 +392,7 @@ Gerado pelo app *Carrão do Lucão* 🚀
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   {/* Option A Box */}
                   <div
-                    className={`p-2.5 rounded-lg border flex items-center justify-between transition-all ${
+                    className={`p-2 sm:p-2.5 rounded-lg border flex items-center justify-between gap-1.5 transition-all min-w-0 ${
                       isWinnerA
                         ? 'bg-emerald-950/40 border-emerald-500 text-emerald-300 font-bold shadow-sm shadow-emerald-950/30 ring-1 ring-emerald-500/30'
                         : isWinnerB
@@ -400,16 +400,16 @@ Gerado pelo app *Carrão do Lucão* 🚀
                         : 'bg-slate-950 border-slate-800/80 text-slate-400'
                     }`}
                   >
-                    <div>
-                      <span className="text-[10px] block opacity-75 truncate max-w-[120px] sm:max-w-[180px]">
+                    <div className="min-w-0 flex-1">
+                      <span className="text-[10px] block opacity-75 truncate max-w-full">
                         {carA.title}
                       </span>
-                      <span className={`text-sm font-bold ${isWinnerA ? 'text-white' : 'text-slate-300'}`}>
+                      <span className={`text-xs sm:text-sm font-bold truncate block ${isWinnerA ? 'text-white' : 'text-slate-300'}`}>
                         {round.valueA}
                       </span>
                     </div>
                     {isWinnerA && (
-                      <span className="text-[10px] bg-emerald-500 text-slate-950 px-2 py-0.5 rounded font-black shrink-0 shadow-sm shadow-emerald-950/50">
+                      <span className="text-[9px] sm:text-[10px] bg-emerald-500 text-slate-950 px-1.5 sm:px-2 py-0.5 rounded font-black shrink-0 shadow-sm shadow-emerald-950/50">
                         Venceu
                       </span>
                     )}
@@ -417,7 +417,7 @@ Gerado pelo app *Carrão do Lucão* 🚀
 
                   {/* Option B Box */}
                   <div
-                    className={`p-2.5 rounded-lg border flex items-center justify-between transition-all ${
+                    className={`p-2 sm:p-2.5 rounded-lg border flex items-center justify-between gap-1.5 transition-all min-w-0 ${
                       isWinnerB
                         ? 'bg-emerald-950/40 border-emerald-500 text-emerald-300 font-bold shadow-sm shadow-emerald-950/30 ring-1 ring-emerald-500/30'
                         : isWinnerA
@@ -425,16 +425,16 @@ Gerado pelo app *Carrão do Lucão* 🚀
                         : 'bg-slate-950 border-slate-800/80 text-slate-400'
                     }`}
                   >
-                    <div>
-                      <span className="text-[10px] block opacity-75 truncate max-w-[120px] sm:max-w-[180px]">
+                    <div className="min-w-0 flex-1">
+                      <span className="text-[10px] block opacity-75 truncate max-w-full">
                         {carB.title}
                       </span>
-                      <span className={`text-sm font-bold ${isWinnerB ? 'text-white' : 'text-slate-300'}`}>
+                      <span className={`text-xs sm:text-sm font-bold truncate block ${isWinnerB ? 'text-white' : 'text-slate-300'}`}>
                         {round.valueB}
                       </span>
                     </div>
                     {isWinnerB && (
-                      <span className="text-[10px] bg-emerald-500 text-slate-950 px-2 py-0.5 rounded font-black shrink-0 shadow-sm shadow-emerald-950/50">
+                      <span className="text-[9px] sm:text-[10px] bg-emerald-500 text-slate-950 px-1.5 sm:px-2 py-0.5 rounded font-black shrink-0 shadow-sm shadow-emerald-950/50">
                         Venceu
                       </span>
                     )}

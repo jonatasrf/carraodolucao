@@ -76,7 +76,7 @@ export const SmartTipsRadar: React.FC<SmartTipsRadarProps> = ({
   return (
     <div className="rounded-2xl bg-slate-900/95 border border-amber-500/30 shadow-xl overflow-hidden">
       {/* Category Tabs Header - Sticky/Fixed Height */}
-      <div className="flex items-center justify-between border-b border-slate-800 bg-slate-950/70 px-2 sm:px-3 py-1.5 overflow-x-auto gap-1">
+      <div className="flex items-center justify-between border-b border-slate-800 bg-slate-950/70 px-2 sm:px-3 py-1.5 overflow-x-auto gap-1 scrollbar-none">
         <div className="flex items-center gap-1.5 shrink-0 text-amber-400 font-bold text-xs pr-1">
           <Sparkles size={14} className="animate-pulse" />
           <span className="hidden sm:inline">Radar do Lucas:</span>
@@ -86,7 +86,7 @@ export const SmartTipsRadar: React.FC<SmartTipsRadarProps> = ({
           <button
             type="button"
             onClick={() => onSelectCategory('taxa')}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+            className={`flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 rounded-lg text-[11px] sm:text-xs font-bold transition-all shrink-0 cursor-pointer ${
               activeCategory === 'taxa'
                 ? 'bg-amber-500 text-slate-950 shadow-sm'
                 : 'text-slate-400 hover:text-white hover:bg-slate-800'
@@ -99,7 +99,7 @@ export const SmartTipsRadar: React.FC<SmartTipsRadarProps> = ({
           <button
             type="button"
             onClick={() => onSelectCategory('preco')}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+            className={`flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 rounded-lg text-[11px] sm:text-xs font-bold transition-all shrink-0 cursor-pointer ${
               activeCategory === 'preco'
                 ? 'bg-amber-500 text-slate-950 shadow-sm'
                 : 'text-slate-400 hover:text-white hover:bg-slate-800'
@@ -112,7 +112,7 @@ export const SmartTipsRadar: React.FC<SmartTipsRadarProps> = ({
           <button
             type="button"
             onClick={() => onSelectCategory('brindes')}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+            className={`flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 rounded-lg text-[11px] sm:text-xs font-bold transition-all shrink-0 cursor-pointer ${
               activeCategory === 'brindes'
                 ? 'bg-amber-500 text-slate-950 shadow-sm'
                 : 'text-slate-400 hover:text-white hover:bg-slate-800'
@@ -125,7 +125,7 @@ export const SmartTipsRadar: React.FC<SmartTipsRadarProps> = ({
           <button
             type="button"
             onClick={() => onSelectCategory('troca')}
-            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+            className={`flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 rounded-lg text-[11px] sm:text-xs font-bold transition-all shrink-0 cursor-pointer ${
               activeCategory === 'troca'
                 ? 'bg-amber-500 text-slate-950 shadow-sm'
                 : 'text-slate-400 hover:text-white hover:bg-slate-800'
@@ -138,10 +138,10 @@ export const SmartTipsRadar: React.FC<SmartTipsRadarProps> = ({
       </div>
 
       {/* 
-        FIXED CONTAINER HEIGHT: Exact 125px on mobile/desktop with overflow-y-auto.
+        FIXED CONTAINER HEIGHT: Constant 135px on mobile and 120px on desktop with overflow-y-auto.
         This strictly guarantees the screen NEVER jumps or causes layout shifts!
       */}
-      <div className="h-[125px] sm:h-[115px] overflow-y-auto p-3 text-xs leading-relaxed text-slate-300">
+      <div className="h-[135px] sm:h-[120px] overflow-y-auto p-3 text-xs leading-relaxed text-slate-300">
         {/* TAB 1: TAXA DE JUROS & MERCADO */}
         {activeCategory === 'taxa' && (
           <div className="space-y-1.5 animate-fadeIn">
@@ -225,19 +225,19 @@ export const SmartTipsRadar: React.FC<SmartTipsRadarProps> = ({
             </p>
 
             <div className="flex flex-wrap gap-1.5 pt-0.5">
-              <span className="text-[10px] bg-slate-950 border border-slate-700 px-2 py-0.5 rounded font-bold text-slate-300">
-                🛡️ Insulfilm / Película (~R$ 500)
+              <span className="text-[10px] bg-slate-950 border border-slate-700 px-2 py-0.5 rounded font-bold text-slate-300 whitespace-nowrap">
+                🛡️ Insulfilm (~R$ 500)
               </span>
-              <span className="text-[10px] bg-slate-950 border border-slate-700 px-2 py-0.5 rounded font-bold text-slate-300">
-                🚗 Emplacamento Total (~R$ 1.000)
+              <span className="text-[10px] bg-slate-950 border border-slate-700 px-2 py-0.5 rounded font-bold text-slate-300 whitespace-nowrap">
+                🚗 Emplacamento (~R$ 1.000)
               </span>
-              <span className="text-[10px] bg-slate-950 border border-slate-700 px-2 py-0.5 rounded font-bold text-slate-300">
+              <span className="text-[10px] bg-slate-950 border border-slate-700 px-2 py-0.5 rounded font-bold text-slate-300 whitespace-nowrap">
                 🧹 Tapetes de Borracha (~R$ 300)
               </span>
-              <span className="text-[10px] bg-slate-950 border border-slate-700 px-2 py-0.5 rounded font-bold text-slate-300">
+              <span className="text-[10px] bg-slate-950 border border-slate-700 px-2 py-0.5 rounded font-bold text-slate-300 whitespace-nowrap">
                 🔧 Protetor de Cárter (~R$ 400)
               </span>
-              <span className="text-[10px] bg-slate-950 border border-slate-700 px-2 py-0.5 rounded font-bold text-slate-300">
+              <span className="text-[10px] bg-slate-950 border border-slate-700 px-2 py-0.5 rounded font-bold text-slate-300 whitespace-nowrap">
                 ⛽ Tanque Cheio (~R$ 350)
               </span>
             </div>

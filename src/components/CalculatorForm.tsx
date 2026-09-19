@@ -335,17 +335,18 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
 
             {/* Car Price Input (Fixed anchor) */}
             <div>
-              <div className="flex items-center justify-between mb-1">
-                <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+              <div className="flex flex-wrap items-center justify-between gap-1 mb-1">
+                <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5 shrink-0">
                   <Car className="w-4 h-4 text-amber-400" />
                   Valor do Carro Novo (R$)
                 </label>
                 <button
                   type="button"
                   onClick={() => setActiveTipCategory('preco')}
-                  className="text-[11px] text-amber-400 hover:text-amber-300 font-semibold cursor-pointer"
+                  className="text-[11px] text-amber-400 hover:text-amber-300 font-semibold cursor-pointer shrink-0"
                 >
-                  Ver desconto da loja & FIPE →
+                  <span className="hidden sm:inline">Ver desconto da loja & FIPE →</span>
+                  <span className="sm:hidden">Dica FIPE & Desconto →</span>
                 </button>
               </div>
               <div className="relative">
@@ -479,13 +480,13 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
                 </label>
               </div>
 
-              <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
                 {commonTerms.map((months) => (
                   <button
                     key={months}
                     type="button"
                     onClick={() => handleTermMonthsChange(months)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 cursor-pointer ${
                       termMonths === months
                         ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/25'
                         : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
@@ -499,7 +500,7 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
                   inputMode="numeric"
                   value={termMonths || ''}
                   onChange={(e) => handleTermMonthsChange(parseInt(e.target.value) || 1)}
-                  className="w-16 bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-white text-center font-bold"
+                  className="w-16 bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-white text-center font-bold shrink-0"
                   placeholder="Outro"
                 />
               </div>
@@ -509,12 +510,12 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {/* Interest Rate */}
               <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="text-xs font-semibold text-slate-300 flex items-center gap-1">
+                <div className="flex flex-wrap items-center justify-between gap-1 mb-1">
+                  <label className="text-xs font-semibold text-slate-300 flex items-center gap-1 shrink-0">
                     <Percent className="w-3.5 h-3.5 text-amber-400" />
                     Taxa de Juros (% a.m.)
                   </label>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1.5 shrink-0">
                     {autoCalculated === 'monthlyRate' && (
                       <span className="text-[10px] font-bold text-amber-400 bg-amber-500/15 px-1.5 py-0.5 rounded border border-amber-500/30 flex items-center gap-1">
                         <Zap size={10} /> Calculado
@@ -550,12 +551,12 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
 
               {/* Monthly Installment */}
               <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="text-xs font-semibold text-slate-300 flex items-center gap-1">
+                <div className="flex flex-wrap items-center justify-between gap-1 mb-1">
+                  <label className="text-xs font-semibold text-slate-300 flex items-center gap-1 shrink-0">
                     <Coins className="w-3.5 h-3.5 text-amber-400" />
                     Valor da Parcela (R$)
                   </label>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1.5 shrink-0">
                     {autoCalculated === 'installment' && (
                       <span className="text-[10px] font-bold text-amber-400 bg-amber-500/15 px-1.5 py-0.5 rounded border border-amber-500/30 flex items-center gap-1">
                         <Zap size={10} /> Calculado
@@ -708,36 +709,36 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
 
             {/* Breakdown Metrics */}
             <div className="grid grid-cols-2 gap-2 text-xs">
-              <div className="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800">
-                <span className="text-slate-400 block text-[11px]">Valor Financiado</span>
-                <span className="font-bold text-white text-sm">
+              <div className="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 min-w-0">
+                <span className="text-slate-400 block text-[11px] truncate">Valor Financiado</span>
+                <span className="font-bold text-white text-xs sm:text-sm truncate block">
                   {formatCurrency(results.totalFinanced)}
                 </span>
               </div>
 
-              <div className="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800">
-                <span className="text-slate-400 block text-[11px]">Entrada Total</span>
-                <span className="font-bold text-emerald-400 text-sm">
+              <div className="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 min-w-0">
+                <span className="text-slate-400 block text-[11px] truncate">Entrada Total</span>
+                <span className="font-bold text-emerald-400 text-xs sm:text-sm truncate block">
                   {formatCurrency(results.totalDownPayment)}
                 </span>
               </div>
 
-              <div className="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800">
-                <span className="text-slate-400 block text-[11px]">Total só de Juros</span>
-                <span className="font-bold text-rose-400 text-sm">
+              <div className="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 min-w-0">
+                <span className="text-slate-400 block text-[11px] truncate">Total só de Juros</span>
+                <span className="font-bold text-rose-400 text-xs sm:text-sm truncate block">
                   {formatCurrency(results.totalInterestPaid)}
                 </span>
-                <span className="text-[10px] text-slate-400 block">
+                <span className="text-[10px] text-slate-400 block truncate">
                   +{formatPercent(results.interestPercentageOfCar)} do carro
                 </span>
               </div>
 
-              <div className="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800">
-                <span className="text-slate-400 block text-[11px]">Custo Final Total</span>
-                <span className="font-bold text-amber-300 text-sm">
+              <div className="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 min-w-0">
+                <span className="text-slate-400 block text-[11px] truncate">Custo Final Total</span>
+                <span className="font-bold text-amber-300 text-xs sm:text-sm truncate block">
                   {formatCurrency(results.totalFinalCost)}
                 </span>
-                <span className="text-[10px] text-slate-400 block">
+                <span className="text-[10px] text-slate-400 block truncate">
                   Tudo desembolsado
                 </span>
               </div>

@@ -102,7 +102,7 @@ export const ScenarioComparison: React.FC<ScenarioComparisonProps> = ({
         <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-emerald-950/70 via-slate-900 to-amber-950/50 border border-emerald-800/40 shadow-xl space-y-3">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
             <div className="flex items-center gap-2 text-emerald-400 font-black text-base">
-              <Trophy size={20} />
+              <Trophy size={20} className="shrink-0" />
               <span>Diagnóstico Comparativo do Lucas</span>
             </div>
             {savings > 0 && (
@@ -122,17 +122,17 @@ export const ScenarioComparison: React.FC<ScenarioComparisonProps> = ({
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         {/* Best Deal */}
         {bestDeal && (
-          <div className="p-4 rounded-xl bg-emerald-950/30 border border-emerald-700/40 shadow-sm space-y-1.5">
+          <div className="p-4 rounded-xl bg-emerald-950/30 border border-emerald-700/40 shadow-sm space-y-1.5 min-w-0">
             <div className="flex items-center justify-between text-xs text-emerald-400 font-bold">
               <span className="flex items-center gap-1">
-                <Trophy size={14} /> Melhor Custo Total
+                <Trophy size={14} className="shrink-0" /> Melhor Custo Total
               </span>
-              <span>1º Lugar</span>
+              <span className="shrink-0">1º Lugar</span>
             </div>
-            <div className="text-base font-black text-white truncate">
+            <div className="text-base font-black text-white truncate" title={bestDeal.title}>
               {bestDeal.title}
             </div>
-            <div className="text-xs text-slate-300">
+            <div className="text-xs text-slate-300 truncate">
               Custo Total: <strong className="text-emerald-400">{formatCurrency(bestDeal.results.totalFinalCost)}</strong>
             </div>
           </div>
@@ -140,17 +140,17 @@ export const ScenarioComparison: React.FC<ScenarioComparisonProps> = ({
 
         {/* Lowest Monthly Installment */}
         {lowestInstallment && (
-          <div className="p-4 rounded-xl bg-blue-950/30 border border-blue-700/40 shadow-sm space-y-1.5">
+          <div className="p-4 rounded-xl bg-blue-950/30 border border-blue-700/40 shadow-sm space-y-1.5 min-w-0">
             <div className="flex items-center justify-between text-xs text-blue-400 font-bold">
               <span className="flex items-center gap-1">
-                <Coins size={14} /> Menor Parcela Mensal
+                <Coins size={14} className="shrink-0" /> Menor Parcela Mensal
               </span>
-              <span>Bolso Leve</span>
+              <span className="shrink-0">Bolso Leve</span>
             </div>
-            <div className="text-base font-black text-white truncate">
+            <div className="text-base font-black text-white truncate" title={lowestInstallment.title}>
               {lowestInstallment.title}
             </div>
-            <div className="text-xs text-slate-300">
+            <div className="text-xs text-slate-300 truncate">
               Parcela: <strong className="text-blue-400">{formatCurrency(lowestInstallment.results.monthlyInstallment)}</strong>
             </div>
           </div>
@@ -158,17 +158,17 @@ export const ScenarioComparison: React.FC<ScenarioComparisonProps> = ({
 
         {/* Lowest Interest Paid */}
         {lowestInterest && (
-          <div className="p-4 rounded-xl bg-purple-950/30 border border-purple-700/40 shadow-sm space-y-1.5">
+          <div className="p-4 rounded-xl bg-purple-950/30 border border-purple-700/40 shadow-sm space-y-1.5 min-w-0">
             <div className="flex items-center justify-between text-xs text-purple-400 font-bold">
               <span className="flex items-center gap-1">
-                <TrendingDown size={14} /> Menor Juros pro Banco
+                <TrendingDown size={14} className="shrink-0" /> Menor Juros pro Banco
               </span>
-              <span>Anti-Banqueiro</span>
+              <span className="shrink-0">Anti-Banqueiro</span>
             </div>
-            <div className="text-base font-black text-white truncate">
+            <div className="text-base font-black text-white truncate" title={lowestInterest.title}>
               {lowestInterest.title}
             </div>
-            <div className="text-xs text-slate-300">
+            <div className="text-xs text-slate-300 truncate">
               Juros: <strong className="text-purple-400">{formatCurrency(lowestInterest.results.totalInterestPaid)}</strong>
             </div>
           </div>

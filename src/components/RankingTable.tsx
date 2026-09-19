@@ -78,7 +78,7 @@ export const RankingTable: React.FC<RankingTableProps> = ({
         </div>
 
         {/* Quick Sorting Pills on mobile */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs scrollbar-none">
           <span className="text-slate-500 font-semibold text-[11px] shrink-0">Ordenar por:</span>
           <button
             onClick={() => handleSort('totalFinalCost')}
@@ -117,15 +117,20 @@ export const RankingTable: React.FC<RankingTableProps> = ({
 
       {/* Table Container */}
       <div className="bg-slate-900/90 rounded-2xl border border-slate-800 shadow-xl overflow-hidden">
+        {/* Swipe hint on mobile */}
+        <div className="sm:hidden flex items-center justify-between px-3.5 py-2 bg-slate-950/80 border-b border-slate-800 text-[11px] text-amber-300 font-medium">
+          <span>👉 Arraste para o lado para ver todas as colunas</span>
+          <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Tabela Completa</span>
+        </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs text-slate-300">
             <thead className="bg-slate-950 text-slate-400 font-bold border-b border-slate-800">
               <tr>
-                <th className="py-3 px-3.5 text-center w-12">#</th>
-                <th className="py-3 px-3.5">Carro / Proposta</th>
+                <th className="py-3 px-3 text-center w-10 shrink-0 whitespace-nowrap">#</th>
+                <th className="py-3 px-3.5 min-w-[140px] whitespace-nowrap">Carro / Proposta</th>
                 <th 
                   onClick={() => handleSort('totalFinalCost')}
-                  className="py-3 px-3.5 cursor-pointer hover:text-white"
+                  className="py-3 px-3.5 cursor-pointer hover:text-white whitespace-nowrap"
                 >
                   <div className="flex items-center gap-1">
                     <span>Custo Total</span>
@@ -134,7 +139,7 @@ export const RankingTable: React.FC<RankingTableProps> = ({
                 </th>
                 <th 
                   onClick={() => handleSort('monthlyInstallment')}
-                  className="py-3 px-3.5 cursor-pointer hover:text-white"
+                  className="py-3 px-3.5 cursor-pointer hover:text-white whitespace-nowrap"
                 >
                   <div className="flex items-center gap-1">
                     <span>Parcela Mensal</span>
@@ -143,7 +148,7 @@ export const RankingTable: React.FC<RankingTableProps> = ({
                 </th>
                 <th 
                   onClick={() => handleSort('totalInterestPaid')}
-                  className="py-3 px-3.5 cursor-pointer hover:text-white"
+                  className="py-3 px-3.5 cursor-pointer hover:text-white whitespace-nowrap"
                 >
                   <div className="flex items-center gap-1">
                     <span>Total em Juros</span>
@@ -152,14 +157,14 @@ export const RankingTable: React.FC<RankingTableProps> = ({
                 </th>
                 <th 
                   onClick={() => handleSort('effectiveMonthlyRate')}
-                  className="py-3 px-3.5 cursor-pointer hover:text-white"
+                  className="py-3 px-3.5 cursor-pointer hover:text-white whitespace-nowrap"
                 >
                   <div className="flex items-center gap-1">
                     <span>Taxa CET</span>
                     <ArrowUpDown size={12} />
                   </div>
                 </th>
-                <th className="py-3 px-3.5 text-center">Veredicto</th>
+                <th className="py-3 px-3.5 text-center whitespace-nowrap">Veredicto</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/60">
@@ -171,7 +176,7 @@ export const RankingTable: React.FC<RankingTableProps> = ({
                     onClick={() => onSelectScenario(sc)}
                     className="hover:bg-slate-800/50 transition-colors cursor-pointer"
                   >
-                    <td className="py-3 px-3.5 text-center font-bold">
+                    <td className="py-3 px-3 text-center font-bold whitespace-nowrap">
                       {isWinner ? (
                         <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 text-xs font-black border border-amber-500/40">
                           1º
@@ -180,38 +185,38 @@ export const RankingTable: React.FC<RankingTableProps> = ({
                         <span className="text-slate-500">{index + 1}º</span>
                       )}
                     </td>
-                    <td className="py-3 px-3.5">
-                      <div className="font-bold text-white text-sm">
+                    <td className="py-3 px-3.5 min-w-[140px] max-w-[220px]">
+                      <div className="font-bold text-white text-sm truncate" title={sc.title}>
                         {sc.title}
                       </div>
                       {sc.dealership && (
-                        <div className="text-[11px] text-slate-400">
+                        <div className="text-[11px] text-slate-400 truncate" title={sc.dealership}>
                           {sc.dealership}
                         </div>
                       )}
                     </td>
-                    <td className="py-3 px-3.5 font-bold text-amber-300">
+                    <td className="py-3 px-3.5 font-bold text-amber-300 whitespace-nowrap">
                       {formatCurrency(sc.results.totalFinalCost)}
                     </td>
-                    <td className="py-3 px-3.5 font-semibold text-white">
+                    <td className="py-3 px-3.5 font-semibold text-white whitespace-nowrap">
                       {formatCurrency(sc.results.monthlyInstallment)}
                       <span className="text-[10px] text-slate-400 block font-normal">
                         {sc.termMonths}x
                       </span>
                     </td>
-                    <td className="py-3 px-3.5 font-semibold text-rose-400">
+                    <td className="py-3 px-3.5 font-semibold text-rose-400 whitespace-nowrap">
                       {formatCurrency(sc.results.totalInterestPaid)}
                       <span className="text-[10px] text-slate-400 block font-normal">
                         +{formatPercent(sc.results.interestPercentageOfCar)}
                       </span>
                     </td>
-                    <td className="py-3 px-3.5 text-slate-200">
+                    <td className="py-3 px-3.5 text-slate-200 whitespace-nowrap">
                       {formatPercent(sc.results.effectiveMonthlyRate)} a.m.
                       <span className="text-[10px] text-slate-400 block">
                         {formatPercent(sc.results.effectiveAnnualRate)} a.a.
                       </span>
                     </td>
-                    <td className="py-3 px-3.5 text-center">
+                    <td className="py-3 px-3.5 text-center whitespace-nowrap">
                       <VerdictBadge badge={sc.results.verdictBadge} size="sm" showLabel={false} />
                     </td>
                   </tr>

@@ -57,8 +57,8 @@ export const Navbar: React.FC<NavbarProps> = ({
       </nav>
 
       {/* Mobile Fixed Bottom Navigation */}
-      <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-950/95 backdrop-blur-lg border-t border-slate-800/90 px-3 py-2 pb-safe">
-        <div className="flex items-center justify-around">
+      <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-950/95 backdrop-blur-lg border-t border-slate-800/90 px-1 py-1.5 pb-safe">
+        <div className="flex items-center justify-around gap-0.5">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
@@ -66,19 +66,19 @@ export const Navbar: React.FC<NavbarProps> = ({
               <button
                 key={item.id}
                 onClick={() => onChangeTab(item.id)}
-                className={`relative flex flex-col items-center justify-center py-1.5 px-3 rounded-xl transition-all cursor-pointer ${
+                className={`relative flex flex-col items-center justify-center py-1 px-1 rounded-xl transition-all cursor-pointer min-w-0 flex-1 ${
                   isActive ? 'text-amber-400 font-bold' : 'text-slate-400 font-medium'
                 }`}
               >
                 <div className="relative">
-                  <Icon size={20} className={isActive ? 'scale-110 text-amber-400 transition-transform' : ''} />
+                  <Icon size={19} className={isActive ? 'scale-110 text-amber-400 transition-transform' : ''} />
                   {typeof item.badge === 'number' && item.badge > 0 && (
-                    <span className="absolute -top-1.5 -right-2.5 min-w-[16px] h-4 text-[10px] flex items-center justify-center px-1 font-bold rounded-full bg-amber-500 text-slate-950">
+                    <span className="absolute -top-1.5 -right-2 min-w-[15px] h-3.5 text-[9px] flex items-center justify-center px-1 font-bold rounded-full bg-amber-500 text-slate-950">
                       {item.badge}
                     </span>
                   )}
                 </div>
-                <span className="text-[11px] mt-1 tracking-tight">{item.label}</span>
+                <span className="text-[10px] mt-0.5 tracking-tight truncate max-w-full text-center">{item.label}</span>
                 {isActive && (
                   <span className="w-1 h-1 rounded-full bg-amber-400 mt-0.5" />
                 )}
