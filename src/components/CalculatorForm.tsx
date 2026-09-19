@@ -11,7 +11,9 @@ import {
   ChevronDown, 
   ChevronUp, 
   Flame,
-  ArrowRight
+  ArrowRight,
+  Zap,
+  Sparkles
 } from 'lucide-react';
 import type { 
   CalculationMode, 
@@ -19,7 +21,12 @@ import type {
   TradeInCar, 
   AdditionalCosts 
 } from '../types';
-import { computeScenarioResults } from '../utils/finance';
+import { 
+  calculateInstallment, 
+  calculateMonthlyRate, 
+  calculatePrincipalFromInstallment,
+  computeScenarioResults 
+} from '../utils/finance';
 import { formatCurrency, formatPercent, generateWhatsAppSummary } from '../utils/formatters';
 import { VerdictBadge } from './VerdictBadge';
 
@@ -28,20 +35,25 @@ interface CalculatorFormProps {
   initialScenario?: Scenario | null;
 }
 
+type AutoCalculatedField = 'installment' | 'monthlyRate' | 'carPrice';
+
 export const CalculatorForm: React.FC<CalculatorFormProps> = ({
   onSaveScenario,
   initialScenario,
 }) => {
-  const [calculationMode, setCalculationMode] = useState<CalculationMode>('SOLVE_INSTALLMENT');
   const [title, setTitle] = useState('Novo Carro do Lucão');
   const [dealership, setDealership] = useState('');
   
-  // Numerical values
+  // Numerical states
   const [carPrice, setCarPrice] = useState<number>(100000);
   const [cashDownPayment, setCashDownPayment] = useState<number>(30000);
   const [termMonths, setTermMonths] = useState<number>(48);
   const [monthlyRate, setMonthlyRate] = useState<number>(1.79);
-  const [installment, setInstallment] = useState<number>(2180);
+  const [installment, setInstallment] = useState<number>(2190);
+
+  // Dynamic calculation tracking
+  const [autoCalculated, setAutoCalculated] = useState<AutoCalculatedField>('installment');
+  const [lastEdited, setLastEdited] = useState<'carPrice' | 'monthlyRate' | 'installment'>('carPrice');
 
   // Trade-in car
   const [tradeInCar, setTradeInCar] = useState<TradeInCar>({
@@ -65,6 +77,24 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
   const [copied, setCopied] = useState(false);
   const [savedFeedback, setSavedFeedback] = useState(false);
 
+  // Helpers to get current down payment and extras
+  const getDownAndExtras = (
+    currentCashDown: number, 
+    currentTradeIn: TradeInCar, 
+    currentExtras: AdditionalCosts
+  ) => {
+    const netTradeIn = currentTradeIn.enabled 
+      ? Math.max(0, (currentTradeIn.offeredValue || 0) - (currentTradeIn.debt || 0))
+      : 0;
+    const totalDown = (currentCashDown || 0) + netTradeIn;
+    const totalExtras = (currentExtras.tac || 0) + 
+                        (currentExtras.iof || 0) + 
+                        (currentExtras.registration || 0) + 
+                        (currentExtras.insurance || 0);
+    const financedExtras = currentExtras.includeInFinancing ? totalExtras : 0;
+    return { totalDown, financedExtras };
+  };
+
   // If editing an existing scenario
   useEffect(() => {
     if (initialScenario) {
@@ -77,11 +107,139 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
       setInstallment(initialScenario.installment);
       setTradeInCar(initialScenario.tradeInCar);
       setAdditionalCosts(initialScenario.additionalCosts);
-      setCalculationMode(initialScenario.calculationMode);
     }
   }, [initialScenario]);
 
-  // Run calculation dynamically
+  // Reactive handler: Car Price changed
+  const handleCarPriceChange = (newPrice: number) => {
+    setCarPrice(newPrice);
+    setLastEdited('carPrice');
+    setAutoCalculated('installment');
+
+    const { totalDown, financedExtras } = getDownAndExtras(cashDownPayment, tradeInCar, additionalCosts);
+    const pv = Math.max(0, newPrice - totalDown + financedExtras);
+    const newPmt = calculateInstallment(pv, monthlyRate, termMonths);
+    setInstallment(Number(newPmt.toFixed(2)));
+  };
+
+  // Reactive handler: Installment changed
+  const handleInstallmentChange = (newInstallment: number) => {
+    setInstallment(newInstallment);
+
+    const { totalDown, financedExtras } = getDownAndExtras(cashDownPayment, tradeInCar, additionalCosts);
+
+    if (lastEdited === 'monthlyRate') {
+      // User entered rate, now enters installment -> calculate Car Price
+      setAutoCalculated('carPrice');
+      const pv = calculatePrincipalFromInstallment(newInstallment, monthlyRate, termMonths);
+      const calculatedPrice = Math.max(0, Math.round(pv + totalDown - financedExtras));
+      setCarPrice(calculatedPrice);
+    } else {
+      // User entered price (or term), now enters installment -> calculate Real Rate
+      setAutoCalculated('monthlyRate');
+      const pv = Math.max(0, carPrice - totalDown + financedExtras);
+      const calculatedRate = calculateMonthlyRate(pv, newInstallment, termMonths);
+      setMonthlyRate(Number(calculatedRate.toFixed(2)));
+    }
+    setLastEdited('installment');
+  };
+
+  // Reactive handler: Monthly Rate changed
+  const handleMonthlyRateChange = (newRate: number) => {
+    setMonthlyRate(newRate);
+
+    const { totalDown, financedExtras } = getDownAndExtras(cashDownPayment, tradeInCar, additionalCosts);
+
+    if (lastEdited === 'installment') {
+      // User entered installment, now enters rate -> calculate Car Price
+      setAutoCalculated('carPrice');
+      const pv = calculatePrincipalFromInstallment(installment, newRate, termMonths);
+      const calculatedPrice = Math.max(0, Math.round(pv + totalDown - financedExtras));
+      setCarPrice(calculatedPrice);
+    } else {
+      // User entered price, now enters rate -> calculate Installment
+      setAutoCalculated('installment');
+      const pv = Math.max(0, carPrice - totalDown + financedExtras);
+      const newPmt = calculateInstallment(pv, newRate, termMonths);
+      setInstallment(Number(newPmt.toFixed(2)));
+    }
+    setLastEdited('monthlyRate');
+  };
+
+  // Reactive handler: Term changed
+  const handleTermMonthsChange = (newTerm: number) => {
+    setTermMonths(newTerm);
+    const { totalDown, financedExtras } = getDownAndExtras(cashDownPayment, tradeInCar, additionalCosts);
+
+    if (autoCalculated === 'carPrice') {
+      const pv = calculatePrincipalFromInstallment(installment, monthlyRate, newTerm);
+      const calculatedPrice = Math.max(0, Math.round(pv + totalDown - financedExtras));
+      setCarPrice(calculatedPrice);
+    } else if (autoCalculated === 'monthlyRate') {
+      const pv = Math.max(0, carPrice - totalDown + financedExtras);
+      const calculatedRate = calculateMonthlyRate(pv, installment, newTerm);
+      setMonthlyRate(Number(calculatedRate.toFixed(2)));
+    } else {
+      const pv = Math.max(0, carPrice - totalDown + financedExtras);
+      const newPmt = calculateInstallment(pv, monthlyRate, newTerm);
+      setInstallment(Number(newPmt.toFixed(2)));
+    }
+  };
+
+  // Reactive handler: Down payment or Extras changed
+  const handleDownPaymentChange = (newCashDown: number) => {
+    setCashDownPayment(newCashDown);
+    const { totalDown, financedExtras } = getDownAndExtras(newCashDown, tradeInCar, additionalCosts);
+
+    if (autoCalculated === 'carPrice') {
+      const pv = calculatePrincipalFromInstallment(installment, monthlyRate, termMonths);
+      setCarPrice(Math.max(0, Math.round(pv + totalDown - financedExtras)));
+    } else if (autoCalculated === 'monthlyRate') {
+      const pv = Math.max(0, carPrice - totalDown + financedExtras);
+      setMonthlyRate(Number(calculateMonthlyRate(pv, installment, termMonths).toFixed(2)));
+    } else {
+      const pv = Math.max(0, carPrice - totalDown + financedExtras);
+      setInstallment(Number(calculateInstallment(pv, monthlyRate, termMonths).toFixed(2)));
+    }
+  };
+
+  const handleTradeInChange = (newTradeIn: TradeInCar) => {
+    setTradeInCar(newTradeIn);
+    const { totalDown, financedExtras } = getDownAndExtras(cashDownPayment, newTradeIn, additionalCosts);
+
+    if (autoCalculated === 'carPrice') {
+      const pv = calculatePrincipalFromInstallment(installment, monthlyRate, termMonths);
+      setCarPrice(Math.max(0, Math.round(pv + totalDown - financedExtras)));
+    } else if (autoCalculated === 'monthlyRate') {
+      const pv = Math.max(0, carPrice - totalDown + financedExtras);
+      setMonthlyRate(Number(calculateMonthlyRate(pv, installment, termMonths).toFixed(2)));
+    } else {
+      const pv = Math.max(0, carPrice - totalDown + financedExtras);
+      setInstallment(Number(calculateInstallment(pv, monthlyRate, termMonths).toFixed(2)));
+    }
+  };
+
+  const handleExtrasChange = (newExtras: AdditionalCosts) => {
+    setAdditionalCosts(newExtras);
+    const { totalDown, financedExtras } = getDownAndExtras(cashDownPayment, tradeInCar, newExtras);
+
+    if (autoCalculated === 'carPrice') {
+      const pv = calculatePrincipalFromInstallment(installment, monthlyRate, termMonths);
+      setCarPrice(Math.max(0, Math.round(pv + totalDown - financedExtras)));
+    } else if (autoCalculated === 'monthlyRate') {
+      const pv = Math.max(0, carPrice - totalDown + financedExtras);
+      setMonthlyRate(Number(calculateMonthlyRate(pv, installment, termMonths).toFixed(2)));
+    } else {
+      const pv = Math.max(0, carPrice - totalDown + financedExtras);
+      setInstallment(Number(calculateInstallment(pv, monthlyRate, termMonths).toFixed(2)));
+    }
+  };
+
+  // Run calculation results for display and diagnosis
+  const calculationMode: CalculationMode = 
+    autoCalculated === 'carPrice' ? 'SOLVE_PRICE' :
+    autoCalculated === 'monthlyRate' ? 'SOLVE_RATE' : 'SOLVE_INSTALLMENT';
+
   const calculation = computeScenarioResults({
     carPrice,
     cashDownPayment,
@@ -101,13 +259,13 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
       id: initialScenario ? initialScenario.id : `scenario-${Date.now()}`,
       title: title.trim() || 'Carro do Lucão',
       dealership: dealership.trim() || undefined,
-      carPrice: calculation.updatedCarPrice,
+      carPrice,
       cashDownPayment,
       tradeInCar,
       additionalCosts,
-      termMonths: calculation.updatedTermMonths,
-      monthlyRate: calculation.updatedMonthlyRate,
-      installment: calculation.updatedInstallment,
+      termMonths,
+      monthlyRate,
+      installment,
       calculationMode,
       results,
       createdAt: new Date().toISOString(),
@@ -124,13 +282,13 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
       id: 'current',
       title: title.trim() || 'Proposta em Análise',
       dealership: dealership.trim() || undefined,
-      carPrice: calculation.updatedCarPrice,
+      carPrice,
       cashDownPayment,
       tradeInCar,
       additionalCosts,
-      termMonths: calculation.updatedTermMonths,
-      monthlyRate: calculation.updatedMonthlyRate,
-      installment: calculation.updatedInstallment,
+      termMonths,
+      monthlyRate,
+      installment,
       calculationMode,
       results,
       createdAt: new Date().toISOString(),
@@ -145,76 +303,29 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
   const commonTerms = [12, 24, 36, 48, 60, 72];
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto pb-24 sm:pb-8">
-      {/* Mode Selector Tabs */}
-      <div className="bg-slate-900/90 p-2 sm:p-2.5 rounded-2xl border border-slate-800 shadow-xl">
-        <div className="flex items-center justify-between px-2 pb-2">
-          <span className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-            <Flame className="w-3.5 h-3.5 text-amber-500" />
-            O que você quer calcular agora, Lucão?
+    <div className="space-y-4 max-w-4xl mx-auto pb-24 sm:pb-8">
+      {/* Dynamic Interaction Hint Banner */}
+      <div className="p-3 bg-gradient-to-r from-amber-500/10 via-slate-900 to-slate-900 rounded-2xl border border-amber-500/30 flex items-center justify-between gap-2 shadow-lg">
+        <div className="flex items-center gap-2 text-xs text-slate-200">
+          <Sparkles className="w-4 h-4 text-amber-400 shrink-0 animate-pulse" />
+          <span>
+            <strong>Simulador Inteligente:</strong> todos os campos são editáveis! Altere o preço, a parcela ou a taxa e as outras células recalculam sozinhas.
           </span>
         </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
-          <button
-            type="button"
-            onClick={() => setCalculationMode('SOLVE_INSTALLMENT')}
-            className={`flex flex-col items-center justify-center p-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-              calculationMode === 'SOLVE_INSTALLMENT'
-                ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/25'
-                : 'bg-slate-800/80 text-slate-300 hover:bg-slate-800'
-            }`}
-          >
-            <span className="text-sm">💵 Parcela</span>
-            <span className="text-[10px] font-normal opacity-90">Tenho preço & taxa</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setCalculationMode('SOLVE_RATE')}
-            className={`flex flex-col items-center justify-center p-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-              calculationMode === 'SOLVE_RATE'
-                ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/25'
-                : 'bg-slate-800/80 text-slate-300 hover:bg-slate-800'
-            }`}
-          >
-            <span className="text-sm">🕵️‍♂️ Taxa Real</span>
-            <span className="text-[10px] font-normal opacity-90">Descobrir o juros real</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setCalculationMode('SOLVE_PRICE')}
-            className={`flex flex-col items-center justify-center p-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-              calculationMode === 'SOLVE_PRICE'
-                ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/25'
-                : 'bg-slate-800/80 text-slate-300 hover:bg-slate-800'
-            }`}
-          >
-            <span className="text-sm">🚗 Preço Máximo</span>
-            <span className="text-[10px] font-normal opacity-90">Cabe no bolso por mês</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setCalculationMode('SOLVE_TERM')}
-            className={`flex flex-col items-center justify-center p-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-              calculationMode === 'SOLVE_TERM'
-                ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/25'
-                : 'bg-slate-800/80 text-slate-300 hover:bg-slate-800'
-            }`}
-          >
-            <span className="text-sm">⏱️ Prazo</span>
-            <span className="text-[10px] font-normal opacity-90">Quantos meses quito</span>
-          </button>
+        <div className="hidden sm:flex items-center gap-1.5 shrink-0 text-[11px] font-bold text-amber-300 bg-amber-500/15 px-2 py-0.5 rounded-full border border-amber-500/30">
+          <Zap size={12} />
+          <span>Auto-calculando: {
+            autoCalculated === 'installment' ? 'Parcela' :
+            autoCalculated === 'monthlyRate' ? 'Taxa Real' : 'Preço do Carro'
+          }</span>
         </div>
       </div>
 
-      {/* Main Form Fields */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left / Top column: Inputs */}
+      {/* Main Form Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        {/* Left Column: Interactive Inputs */}
         <div className="lg:col-span-7 space-y-4">
-          <div className="bg-slate-900/80 p-4 sm:p-5 rounded-2xl border border-slate-800/90 shadow-xl space-y-4">
+          <div className="bg-slate-900/85 p-4 sm:p-5 rounded-2xl border border-slate-800 shadow-xl space-y-4">
             {/* Title & Dealership */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
@@ -226,54 +337,55 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="Ex: Jeep Renegade Longitude"
-                  className="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500 font-medium"
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-amber-500 font-medium"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-slate-300 mb-1">
-                  Concessionária / Loja (Opcional)
+                  Concessionária / Loja
                 </label>
                 <input
                   type="text"
                   value={dealership}
                   onChange={(e) => setDealership(e.target.value)}
                   placeholder="Ex: Fiat Amazonas / Particular"
-                  className="w-full bg-slate-950 border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500 font-medium"
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white focus:outline-none focus:border-amber-500 font-medium"
                 />
               </div>
             </div>
 
-            {/* Car Price */}
+            {/* Car Price Input */}
             <div>
               <div className="flex items-center justify-between mb-1">
                 <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
                   <Car className="w-4 h-4 text-amber-400" />
                   Valor do Carro Novo (R$)
                 </label>
-                {calculationMode === 'SOLVE_PRICE' && (
-                  <span className="text-[11px] font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
-                    Calculado Automaticamente
+                {autoCalculated === 'carPrice' && (
+                  <span className="text-[11px] font-bold text-amber-400 bg-amber-500/15 px-2 py-0.5 rounded border border-amber-500/30 flex items-center gap-1">
+                    <Zap size={11} /> Calculado
                   </span>
                 )}
               </div>
-              <input
-                type="number"
-                inputMode="decimal"
-                disabled={calculationMode === 'SOLVE_PRICE'}
-                value={calculationMode === 'SOLVE_PRICE' ? calculation.updatedCarPrice : carPrice || ''}
-                onChange={(e) => setCarPrice(parseFloat(e.target.value) || 0)}
-                placeholder="100000"
-                className={`w-full bg-slate-950 border rounded-xl px-4 py-3 text-lg font-bold text-white focus:outline-none ${
-                  calculationMode === 'SOLVE_PRICE'
-                    ? 'border-amber-500/50 bg-amber-950/20 text-amber-300 cursor-not-allowed'
-                    : 'border-slate-700/80 focus:border-amber-500'
-                }`}
-              />
+              <div className="relative">
+                <input
+                  type="number"
+                  inputMode="decimal"
+                  value={carPrice || ''}
+                  onChange={(e) => handleCarPriceChange(parseFloat(e.target.value) || 0)}
+                  placeholder="100000"
+                  className={`w-full bg-slate-950 border rounded-xl px-4 py-2.5 text-lg font-bold text-white focus:outline-none transition-all ${
+                    autoCalculated === 'carPrice'
+                      ? 'border-amber-500 ring-1 ring-amber-500/30 bg-amber-950/10 text-amber-300'
+                      : 'border-slate-700/80 focus:border-amber-500'
+                  }`}
+                />
+              </div>
             </div>
 
             {/* Down Payment Section */}
-            <div className="p-3.5 bg-slate-950/60 rounded-xl border border-slate-800/80 space-y-3">
+            <div className="p-3.5 bg-slate-950/70 rounded-xl border border-slate-800 space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-slate-300 uppercase tracking-wide flex items-center gap-1.5">
                   <Coins className="w-4 h-4 text-emerald-400" />
@@ -293,7 +405,7 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
                   type="number"
                   inputMode="decimal"
                   value={cashDownPayment || ''}
-                  onChange={(e) => setCashDownPayment(parseFloat(e.target.value) || 0)}
+                  onChange={(e) => handleDownPaymentChange(parseFloat(e.target.value) || 0)}
                   placeholder="30000"
                   className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3.5 py-2 text-sm text-white focus:outline-none focus:border-amber-500 font-semibold"
                 />
@@ -305,7 +417,7 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
                   <input
                     type="checkbox"
                     checked={tradeInCar.enabled}
-                    onChange={(e) => setTradeInCar({ ...tradeInCar, enabled: e.target.checked })}
+                    onChange={(e) => handleTradeInChange({ ...tradeInCar, enabled: e.target.checked })}
                     className="w-4 h-4 accent-amber-500 rounded cursor-pointer"
                   />
                   <span className="text-xs font-semibold text-slate-200">
@@ -337,7 +449,7 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
                           type="number"
                           inputMode="decimal"
                           value={tradeInCar.fipeValue || ''}
-                          onChange={(e) => setTradeInCar({ ...tradeInCar, fipeValue: parseFloat(e.target.value) || 0 })}
+                          onChange={(e) => handleTradeInChange({ ...tradeInCar, fipeValue: parseFloat(e.target.value) || 0 })}
                           placeholder="35000"
                           className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500"
                         />
@@ -350,7 +462,7 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
                           type="number"
                           inputMode="decimal"
                           value={tradeInCar.offeredValue || ''}
-                          onChange={(e) => setTradeInCar({ ...tradeInCar, offeredValue: parseFloat(e.target.value) || 0 })}
+                          onChange={(e) => handleTradeInChange({ ...tradeInCar, offeredValue: parseFloat(e.target.value) || 0 })}
                           placeholder="28000"
                           className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500 font-semibold"
                         />
@@ -365,7 +477,7 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
                         type="number"
                         inputMode="decimal"
                         value={tradeInCar.debt || ''}
-                        onChange={(e) => setTradeInCar({ ...tradeInCar, debt: parseFloat(e.target.value) || 0 })}
+                        onChange={(e) => handleTradeInChange({ ...tradeInCar, debt: parseFloat(e.target.value) || 0 })}
                         placeholder="0 (se já quitado)"
                         className="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-amber-500"
                       />
@@ -381,120 +493,108 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
               </div>
             </div>
 
-            {/* Term & Rates Section */}
-            <div className="space-y-3">
-              {/* Term Selection */}
+            {/* Term Section */}
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+                  <Calendar className="w-4 h-4 text-amber-400" />
+                  Prazo do Financiamento (Meses)
+                </label>
+              </div>
+
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
+                {commonTerms.map((months) => (
+                  <button
+                    key={months}
+                    type="button"
+                    onClick={() => handleTermMonthsChange(months)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                      termMonths === months
+                        ? 'bg-amber-500 text-slate-950 shadow-md shadow-amber-500/25'
+                        : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                    }`}
+                  >
+                    {months}x
+                  </button>
+                ))}
+                <input
+                  type="number"
+                  inputMode="numeric"
+                  value={termMonths || ''}
+                  onChange={(e) => handleTermMonthsChange(parseInt(e.target.value) || 1)}
+                  className="w-16 bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-white text-center font-bold"
+                  placeholder="Outro"
+                />
+              </div>
+            </div>
+
+            {/* Rate vs Installment Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {/* Interest Rate */}
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
-                    <Calendar className="w-4 h-4 text-amber-400" />
-                    Prazo do Financiamento (Meses)
+                  <label className="text-xs font-semibold text-slate-300 flex items-center gap-1">
+                    <Percent className="w-3.5 h-3.5 text-amber-400" />
+                    Taxa de Juros (% a.m.)
                   </label>
-                  {calculationMode === 'SOLVE_TERM' && (
-                    <span className="text-[11px] font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
-                      Calculado Automaticamente
+                  {autoCalculated === 'monthlyRate' && (
+                    <span className="text-[10px] font-bold text-amber-400 bg-amber-500/15 px-1.5 py-0.5 rounded border border-amber-500/30 flex items-center gap-1">
+                      <Zap size={10} /> Calculado
                     </span>
                   )}
                 </div>
-
-                <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
-                  {commonTerms.map((months) => (
-                    <button
-                      key={months}
-                      type="button"
-                      disabled={calculationMode === 'SOLVE_TERM'}
-                      onClick={() => setTermMonths(months)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                        termMonths === months
-                          ? 'bg-amber-500 text-slate-950'
-                          : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                      }`}
-                    >
-                      {months}x
-                    </button>
-                  ))}
-                  <input
-                    type="number"
-                    inputMode="numeric"
-                    disabled={calculationMode === 'SOLVE_TERM'}
-                    value={calculationMode === 'SOLVE_TERM' ? calculation.updatedTermMonths : termMonths || ''}
-                    onChange={(e) => setTermMonths(parseInt(e.target.value) || 1)}
-                    className="w-16 bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-white text-center font-bold"
-                    placeholder="Outro"
-                  />
-                </div>
+                <input
+                  type="number"
+                  step="0.01"
+                  inputMode="decimal"
+                  value={monthlyRate || ''}
+                  onChange={(e) => handleMonthlyRateChange(parseFloat(e.target.value) || 0)}
+                  placeholder="1.79"
+                  className={`w-full bg-slate-950 border rounded-xl px-3.5 py-2.5 text-sm font-bold text-white focus:outline-none transition-all ${
+                    autoCalculated === 'monthlyRate'
+                      ? 'border-amber-500 ring-1 ring-amber-500/30 bg-amber-950/10 text-amber-300'
+                      : 'border-slate-700/80 focus:border-amber-500'
+                  }`}
+                />
+                <span className="text-[11px] text-slate-400 mt-1 block">
+                  Equivale a {formatPercent(results.effectiveAnnualRate)} ao ano
+                </span>
               </div>
 
-              {/* Monthly Rate vs Installment */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {/* Interest Rate */}
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <label className="text-xs font-semibold text-slate-300 flex items-center gap-1">
-                      <Percent className="w-3.5 h-3.5 text-amber-400" />
-                      Taxa de Juros (% a.m.)
-                    </label>
-                    {calculationMode === 'SOLVE_RATE' && (
-                      <span className="text-[10px] font-bold text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded">
-                        Calculando Real
-                      </span>
-                    )}
-                  </div>
-                  <input
-                    type="number"
-                    step="0.01"
-                    inputMode="decimal"
-                    disabled={calculationMode === 'SOLVE_RATE'}
-                    value={calculationMode === 'SOLVE_RATE' ? calculation.updatedMonthlyRate : monthlyRate || ''}
-                    onChange={(e) => setMonthlyRate(parseFloat(e.target.value) || 0)}
-                    placeholder="1.79"
-                    className={`w-full bg-slate-950 border rounded-xl px-3.5 py-2.5 text-sm font-bold text-white focus:outline-none ${
-                      calculationMode === 'SOLVE_RATE'
-                        ? 'border-amber-500/50 bg-amber-950/20 text-amber-300 cursor-not-allowed'
-                        : 'border-slate-700/80 focus:border-amber-500'
-                    }`}
-                  />
-                  <span className="text-[11px] text-slate-400 mt-1 block">
-                    Equivale a {formatPercent(results.effectiveAnnualRate)} ao ano
-                  </span>
+              {/* Monthly Installment */}
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-xs font-semibold text-slate-300 flex items-center gap-1">
+                    <Coins className="w-3.5 h-3.5 text-amber-400" />
+                    Valor da Parcela (R$)
+                  </label>
+                  {autoCalculated === 'installment' && (
+                    <span className="text-[10px] font-bold text-amber-400 bg-amber-500/15 px-1.5 py-0.5 rounded border border-amber-500/30 flex items-center gap-1">
+                      <Zap size={10} /> Calculado
+                    </span>
+                  )}
                 </div>
-
-                {/* Monthly Installment */}
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <label className="text-xs font-semibold text-slate-300 flex items-center gap-1">
-                      <Coins className="w-3.5 h-3.5 text-amber-400" />
-                      Valor da Parcela (R$)
-                    </label>
-                    {calculationMode === 'SOLVE_INSTALLMENT' && (
-                      <span className="text-[10px] font-bold text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded">
-                        Calculando PMT
-                      </span>
-                    )}
-                  </div>
-                  <input
-                    type="number"
-                    step="1"
-                    inputMode="decimal"
-                    disabled={calculationMode === 'SOLVE_INSTALLMENT'}
-                    value={calculationMode === 'SOLVE_INSTALLMENT' ? calculation.updatedInstallment : installment || ''}
-                    onChange={(e) => setInstallment(parseFloat(e.target.value) || 0)}
-                    placeholder="2180"
-                    className={`w-full bg-slate-950 border rounded-xl px-3.5 py-2.5 text-sm font-bold text-white focus:outline-none ${
-                      calculationMode === 'SOLVE_INSTALLMENT'
-                        ? 'border-amber-500/50 bg-amber-950/20 text-amber-300 cursor-not-allowed'
-                        : 'border-slate-700/80 focus:border-amber-500'
-                    }`}
-                  />
-                  <span className="text-[11px] text-slate-400 mt-1 block">
-                    Total: {formatCurrency(results.totalPaidInstallments)}
-                  </span>
-                </div>
+                <input
+                  type="number"
+                  step="1"
+                  inputMode="decimal"
+                  value={installment || ''}
+                  onChange={(e) => handleInstallmentChange(parseFloat(e.target.value) || 0)}
+                  placeholder="2190"
+                  className={`w-full bg-slate-950 border rounded-xl px-3.5 py-2.5 text-sm font-bold text-white focus:outline-none transition-all ${
+                    autoCalculated === 'installment'
+                      ? 'border-amber-500 ring-1 ring-amber-500/30 bg-amber-950/10 text-amber-300'
+                      : 'border-slate-700/80 focus:border-amber-500'
+                  }`}
+                />
+                <span className="text-[11px] text-slate-400 mt-1 block">
+                  Total parcelas: {formatCurrency(results.totalPaidInstallments)}
+                </span>
               </div>
             </div>
 
             {/* Additional Fees Accordion */}
-            <div className="pt-2 border-t border-slate-800/80">
+            <div className="pt-2 border-t border-slate-800">
               <button
                 type="button"
                 onClick={() => setShowExtras(!showExtras)}
@@ -508,7 +608,7 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
               </button>
 
               {showExtras && (
-                <div className="mt-2 p-3 bg-slate-950/80 rounded-xl border border-slate-800/80 space-y-3">
+                <div className="mt-2 p-3 bg-slate-950/80 rounded-xl border border-slate-800 space-y-3">
                   <div className="grid grid-cols-2 gap-2">
                     <div>
                       <label className="block text-[11px] text-slate-400 mb-0.5">
@@ -518,7 +618,7 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
                         type="number"
                         inputMode="decimal"
                         value={additionalCosts.tac || ''}
-                        onChange={(e) => setAdditionalCosts({ ...additionalCosts, tac: parseFloat(e.target.value) || 0 })}
+                        onChange={(e) => handleExtrasChange({ ...additionalCosts, tac: parseFloat(e.target.value) || 0 })}
                         placeholder="1200"
                         className="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white"
                       />
@@ -531,7 +631,7 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
                         type="number"
                         inputMode="decimal"
                         value={additionalCosts.iof || ''}
-                        onChange={(e) => setAdditionalCosts({ ...additionalCosts, iof: parseFloat(e.target.value) || 0 })}
+                        onChange={(e) => handleExtrasChange({ ...additionalCosts, iof: parseFloat(e.target.value) || 0 })}
                         placeholder="2200"
                         className="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white"
                       />
@@ -547,7 +647,7 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
                         type="number"
                         inputMode="decimal"
                         value={additionalCosts.registration || ''}
-                        onChange={(e) => setAdditionalCosts({ ...additionalCosts, registration: parseFloat(e.target.value) || 0 })}
+                        onChange={(e) => handleExtrasChange({ ...additionalCosts, registration: parseFloat(e.target.value) || 0 })}
                         placeholder="950"
                         className="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white"
                       />
@@ -560,7 +660,7 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
                         type="number"
                         inputMode="decimal"
                         value={additionalCosts.insurance || ''}
-                        onChange={(e) => setAdditionalCosts({ ...additionalCosts, insurance: parseFloat(e.target.value) || 0 })}
+                        onChange={(e) => handleExtrasChange({ ...additionalCosts, insurance: parseFloat(e.target.value) || 0 })}
                         placeholder="0"
                         className="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white"
                       />
@@ -571,7 +671,7 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
                     <input
                       type="checkbox"
                       checked={additionalCosts.includeInFinancing}
-                      onChange={(e) => setAdditionalCosts({ ...additionalCosts, includeInFinancing: e.target.checked })}
+                      onChange={(e) => handleExtrasChange({ ...additionalCosts, includeInFinancing: e.target.checked })}
                       className="w-4 h-4 accent-amber-500 rounded cursor-pointer"
                     />
                     <span className="text-xs text-slate-300">
@@ -584,7 +684,7 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
           </div>
         </div>
 
-        {/* Right column: Real-time Live Result Card */}
+        {/* Right Column: Live Result Card */}
         <div className="lg:col-span-5 space-y-4">
           <div className="bg-gradient-to-b from-slate-900 to-slate-950 p-5 rounded-2xl border border-slate-800 shadow-2xl space-y-4 sticky top-20">
             {/* Header / Verdict */}
@@ -605,7 +705,7 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
                 {formatCurrency(results.monthlyInstallment)}
               </div>
               <span className="text-xs font-semibold text-slate-400 mt-1 block">
-                {calculation.updatedTermMonths}x meses • Taxa real {formatPercent(results.effectiveMonthlyRate)} a.m.
+                {termMonths}x meses • Taxa real {formatPercent(results.effectiveMonthlyRate)} a.m.
               </span>
             </div>
 
@@ -655,7 +755,7 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
               <p className="text-xs text-slate-300 leading-relaxed italic">
                 "{results.verdictRoast}"
               </p>
-              <div className="pt-2 border-t border-slate-800/80 text-[11px] text-slate-400">
+              <div className="pt-2 border-t border-slate-800 text-[11px] text-slate-400">
                 💡 <strong className="text-slate-200">Conselho:</strong> {results.verdictAdvice}
               </div>
             </div>
