@@ -58,7 +58,7 @@ export const DueloX1: React.FC<DueloX1Props> = ({
           <Swords size={32} />
         </div>
         <h3 className="text-xl font-black text-white">
-          O Duelo X1 precisa de pelo menos 2 carros!
+          O Duelo de Propostas precisa de pelo menos 2 carros!
         </h3>
         <p className="text-xs text-slate-400 max-w-md mx-auto">
           Cadastre mais um cenário no simulador ou carregue os exemplos prontos para colocar duas propostas em um confronto direto round a round.
@@ -185,7 +185,7 @@ export const DueloX1: React.FC<DueloX1Props> = ({
     if (!winnerCar || !loserCar) return;
 
     const message = `
-⚔️ *DUELO X1 DE CARROS DO LUCAS* ⚔️
+⚔️ *DUELO DE CARROS DO LUCAS* ⚔️
 🥊 *${carA.title}*  _VS_  *${carB.title}*
 
 🏆 *VENCEDOR POR NOCAUTE:* *${winnerCar.title}*
@@ -213,7 +213,7 @@ Gerado pelo app *Carrão do Lucão* 🚀
       <div className="text-center space-y-1">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 text-red-400 border border-red-500/20 text-xs font-black uppercase tracking-wider">
           <Swords size={14} />
-          <span>Modo Duelo X1 • Confronto Direto</span>
+          <span>Duelo de Propostas • Confronto Direto</span>
         </div>
         <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
           Qual carro vence no ringue financeiro?
@@ -240,7 +240,7 @@ Gerado pelo app *Carrão do Lucão* 🚀
             <span className={`text-xs font-black uppercase tracking-wider flex items-center gap-1.5 ${
               winnerCar?.id === carA.id ? 'text-emerald-400' : 'text-blue-400'
             }`}>
-              🥊 Desafiante A (Player 1)
+              🥊 Proposta A
               {winnerCar?.id === carA.id && (
                 <span className="bg-emerald-500/20 text-emerald-400 text-[10px] px-2 py-0.5 rounded-full border border-emerald-500/30 font-bold ml-1">
                   Vencedor ({scoreA} rounds)
@@ -289,7 +289,7 @@ Gerado pelo app *Carrão do Lucão* 🚀
             <span className={`text-xs font-black uppercase tracking-wider flex items-center gap-1.5 ${
               winnerCar?.id === carB.id ? 'text-emerald-400' : 'text-rose-400'
             }`}>
-              🥊 Desafiante B (Player 2)
+              🥊 Proposta B
               {winnerCar?.id === carB.id && (
                 <span className="bg-emerald-500/20 text-emerald-400 text-[10px] px-2 py-0.5 rounded-full border border-emerald-500/30 font-bold ml-1">
                   Vencedor ({scoreB} rounds)

@@ -12,7 +12,8 @@ import { DueloX1 } from './components/DueloX1';
 import { FUNNY_PRESETS } from './utils/humor';
 import { computeScenarioResults } from './utils/finance';
 
-const STORAGE_KEY = 'carrao_do_lucao_scenarios_v1';
+const STORAGE_KEY = 'carrao_do_lucao_scenarios_v2';
+const OLD_STORAGE_KEY = 'carrao_do_lucao_scenarios_v1';
 
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<ActiveTab>('calculator');
@@ -30,6 +31,21 @@ export const App: React.FC = () => {
         if (Array.isArray(parsed) && parsed.length > 0) {
           setScenarios(parsed);
           return;
+        }
+      } else {
+        // Check if v1 has user-customized scenarios (not the old gaming presets)
+        const oldSaved = localStorage.getItem(OLD_STORAGE_KEY);
+        if (oldSaved) {
+          const parsed = JSON.parse(oldSaved);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            const hasOldGamerPresets = parsed.some((s: Scenario) => 
+              s.title?.includes('GTA') || s.title?.includes('Assassino Furtivo') || s.title?.includes('Tiro de Purpurina')
+            );
+            if (!hasOldGamerPresets) {
+              setScenarios(parsed);
+              return;
+            }
+          }
         }
       }
     } catch {

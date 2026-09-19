@@ -31,12 +31,12 @@ Criado especialmente para rodar **100% no navegador (GitHub Pages)** e **otimiza
 
 ### 5. 😂 Humor Personalizado & Zoeiras do Lucão
 - Veredictos automáticos baseados nas métricas reais da proposta:
-  - 🚨 *Cilada Nível Marea Turbo Sem Óleo*
-  - ⚠️ *Bolsa Banqueiro Confirmada*
-  - 👀 *Dá pra Engolir, mas Dói o Bolso*
-  - ⚖️ *Proposta Dentro da Média*
+  - 🚨 *Cilada Nível Marea Turbo: Dois Carros pro Banco e Meio pra Você*
+  - ⚠️ *Cilada Gourmet: O Cafezinho da Concessionária vai Custar Caro*
+  - 👀 *Letras Miúdas: Dá pra Engolir, mas tem Taxa Camuflada*
+  - ⚖️ *Proposta Dentro da Média: Negócio Coerente*
   - 🏆 *Selo Lucão de Inteligência Financeira*
-- Presets prontos com clássicos automotivos (*Renegade de Shopping*, *Corolla de Vovô*, *Civic G10 Parcelado*).
+- Presets prontos com clássicos automotivos (*Renegade de Shopping*, *Corolla de Tiozão Sensato*, *Civic G10 Rebaixado*).
 - Chuva de confetes quando encontra um negócio que realmente vale a pena!
 
 ### 6. 📱 100% Mobile-First & Compartilhamento

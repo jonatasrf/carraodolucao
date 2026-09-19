@@ -11,32 +11,32 @@ interface Props {
 export const VerdictBadge: React.FC<Props> = ({ badge, size = 'md', showLabel = true }) => {
   const configs = {
     excelente: {
-      label: 'Salto de Fé do Lucão',
-      sub: 'Assassin\'s Creed / Aprovado',
+      label: 'Selo Lucão de Aprovação',
+      sub: 'Negócio Excelente / Aprovado',
       color: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
       icon: Award,
     },
     razoavel: {
-      label: 'Missão GTA Concluída',
-      sub: 'Sem Carga do Death Stranding',
+      label: 'Compra Racional',
+      sub: 'Dentro da Média / Coerente',
       color: 'bg-blue-500/15 text-blue-400 border-blue-500/30',
       icon: Scale,
     },
     alerta: {
-      label: 'Tiro de Purpurina',
-      sub: 'Lâmina Oculta do Assassin\'s Creed',
+      label: 'Atenção às Taxas',
+      sub: 'Custos Ocultos no Contrato',
       color: 'bg-amber-500/15 text-amber-400 border-amber-500/30',
       icon: AlertCircle,
     },
     perigo: {
-      label: 'CLT no Death Stranding',
-      sub: 'Carregando Caixa nos Correios',
+      label: 'Boleto Interminável',
+      sub: 'Juros Altos / Parcela Pesada',
       color: 'bg-orange-500/15 text-orange-400 border-orange-500/30',
       icon: AlertTriangle,
     },
     agiota: {
-      label: '5 Estrelas no GTA',
-      sub: 'YOU DIED / Agiota de Los Santos',
+      label: 'Cilada Financeira',
+      sub: 'Juros Abusivos / Fuja!',
       color: 'bg-red-500/15 text-red-400 border-red-500/30 animate-pulse',
       icon: ShieldAlert,
     },
