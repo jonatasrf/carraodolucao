@@ -41,7 +41,7 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
   onSaveScenario,
   initialScenario,
 }) => {
-  const [title, setTitle] = useState('Novo Carro do Lucão');
+  const [title, setTitle] = useState('Novo Carro do Lucas');
   const [dealership, setDealership] = useState('');
   
   // Numerical states (carPrice is an absolute user anchor)
@@ -230,7 +230,7 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
   const handleSave = () => {
     const newScenario: Scenario = {
       id: initialScenario ? initialScenario.id : `scenario-${Date.now()}`,
-      title: title.trim() || 'Carro do Lucão',
+      title: title.trim() || 'Carro do Lucas',
       dealership: dealership.trim() || undefined,
       carPrice,
       cashDownPayment,
@@ -747,7 +747,7 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
             <div className="p-3.5 rounded-xl bg-slate-900/60 border border-slate-800 space-y-2">
               <div className="flex items-center gap-1.5 text-xs font-bold text-amber-300">
                 <Flame size={14} className="text-rose-500" />
-                <span>Diagnóstico do Lucão:</span>
+                <span>Diagnóstico do Lucas:</span>
               </div>
               <p className="text-xs text-slate-300 leading-relaxed italic">
                 "{results.verdictRoast}"

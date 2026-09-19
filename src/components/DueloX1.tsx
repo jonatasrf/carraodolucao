@@ -185,7 +185,7 @@ export const DueloX1: React.FC<DueloX1Props> = ({
     if (!winnerCar || !loserCar) return;
 
     const message = `
-⚔️ *DUELO X1 DE CARROS DO LUCÃO* ⚔️
+⚔️ *DUELO X1 DE CARROS DO LUCAS* ⚔️
 🥊 *${carA.title}*  _VS_  *${carB.title}*
 
 🏆 *VENCEDOR POR NOCAUTE:* *${winnerCar.title}*

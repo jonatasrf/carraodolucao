@@ -35,7 +35,7 @@ export function generateHumorVerdict(params: {
     return {
       badge: 'agiota',
       title: '🚨 5 ESTRELAS NO GTA: YOU DIED & TRABALHO NOS CORREIOS DO DEATH STRANDING',
-      roast: `LUCÃO, ISSO É ASSALTO COM 5 ESTRELAS DE POLÍCIA NO GTA! Com R$ ${Math.round(totalInterestPaid).toLocaleString('pt-BR')} SÓ DE JUROS, você tomou uma lâmina oculta nas costas do Assassin's Creed! Com essa dívida você vai ter que pedir emprego nos Correios igual no Death Stranding, onde o cara só anda levando caixa e encomenda nas costas o dia inteiro pra conseguir pagar o boleto! Nem o agiota mais perigoso de Los Santos cobraria uma taxa dessas!`,
+      roast: `LUCAS, ISSO É ASSALTO COM 5 ESTRELAS DE POLÍCIA NO GTA! Com R$ ${Math.round(totalInterestPaid).toLocaleString('pt-BR')} SÓ DE JUROS, você tomou uma lâmina oculta nas costas do Assassin's Creed! Com essa dívida você vai ter que pedir emprego nos Correios igual no Death Stranding, onde o cara só anda levando caixa e encomenda nas costas o dia inteiro pra conseguir pagar o boleto! Nem o agiota mais perigoso de Los Santos cobraria uma taxa dessas!`,
       advice: 'Dá respawn na bonfire e foge! O vendedor te deu uma facada furtiva do Assassin\'s Creed. Não assine isso nem sob hipnose!'
     };
   }
@@ -45,7 +45,7 @@ export function generateHumorVerdict(params: {
     return {
       badge: 'perigo',
       title: '⚠️ TIRO DE PURPURINA DO FORTNITE & CARTEIRO DO DEATH STRANDING',
-      roast: `Cuidado, Lucão! Essa proposta da concessionária é igualzinha arma de Fortnite: cheia de gracinha, soltando tiro de purpurina e confete na sua cara, mas na verdade mais de ${Math.round(interestPercentageOfCar)}% do valor do carro é juros puro pro banqueiro! Se assinar isso, você vai virar CLT dos Correios no Death Stranding, passando os próximos anos andando a pé com 200kg de pacote nas costas pra pagar o banco.`,
+      roast: `Cuidado, Lucas! Essa proposta da concessionária é igualzinha arma de Fortnite: cheia de gracinha, soltando tiro de purpurina e confete na sua cara, mas na verdade mais de ${Math.round(interestPercentageOfCar)}% do valor do carro é juros puro pro banqueiro! Se assinar isso, você vai virar CLT dos Correios no Death Stranding, passando os próximos anos andando a pé com 200kg de pacote nas costas pra pagar o banco.`,
       advice: 'O vendedor tá achando que você cai em tiro de purpurina do Fortnite. Exija cortar essa taxa ou aumente a entrada pra escapar desse grind eterno!'
     };
   }
@@ -77,12 +77,12 @@ export function generateHumorVerdict(params: {
     return {
       badge: 'razoavel',
       title: '⚖️ MISSÃO DO GTA CONCLUÍDA & SEM CARGA DO DEATH STRANDING',
-      roast: `Proposta honesta, Lucão! Sem perseguição policial de Los Santos no GTA e sem você precisar virar entregador dos Correios no Death Stranding carregando peso a pé. O carro sai pronto pra rodar!${tradeInComment}`,
+      roast: `Proposta honesta, Lucas! Sem perseguição policial de Los Santos no GTA e sem você precisar virar entregador dos Correios no Death Stranding carregando peso a pé. O carro sai pronto pra rodar!${tradeInComment}`,
       advice: 'Tenta chorar um IPVA de brinde ou primeira revisão grátis na concessionária. Um choro bem dado na negociação é igual acertar o headshot: resolve na hora!'
     };
   }
 
-  // 5. Level Excelente (Score < 25)
+  // 5. Level Excelente (Score < 25) - TEXTO COM BENEFÍCIO MÁXIMO (MANTÉM LUCÃO!)
   return {
     badge: 'excelente',
     title: '🏆 CLUTCH 1v5 NO GTA & SALTO DE FÉ DO ASSASSIN\'S CREED',
@@ -186,7 +186,7 @@ export const ANTI_GOLPE_TIPS = [
   },
   {
     icon: 'FileText',
-    title: 'Visão de Águia do Lucão: Tolerância Zero para TAC e Despachante',
+    title: 'Visão de Águia do Lucas: Tolerância Zero para TAC e Despachante',
     description: 'No jogo da negociação, tarifa embutida sem explicação é golpe. Não engula taxa de cadastro de R$ 1.800 nem despachante superfaturado como se estivesse tunando carro na Los Santos Customs do GTA.'
   }
 ];

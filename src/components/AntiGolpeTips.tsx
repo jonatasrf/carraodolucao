@@ -55,7 +55,7 @@ export const AntiGolpeTips: React.FC = () => {
     },
     {
       title: 'A Ancoragem na Parcela ("Cabe no Seu Bolso?")',
-      sellerQuote: '"Não esquenta a cabeça com o valor total, Lucão. Olha aqui: fica só R$ 1.990 por mês, cabe direitinho no seu orçamento!"',
+      sellerQuote: '"Não esquenta a cabeça com o valor total, Lucas. Olha aqui: fica só R$ 1.990 por mês, cabe direitinho no seu orçamento!"',
       hiddenTrap: 'Desvia sua atenção do custo total de R$ 160.000 para uma parcela pequena. É assim que eles enfiam 48 ou 60 meses com juros de agiota sem você perceber que está pagando 2 carros.',
       counterMove: 'Nunca negocie pelo valor da parcela. Responda: "Não quero saber da parcela agora. Quero saber o Custo Total Financiado e a soma de tudo que vou pagar no final. Abre a tela do CET pra mim."',
       badge: 'Ilusão de Ótica'
@@ -83,7 +83,7 @@ export const AntiGolpeTips: React.FC = () => {
     },
     {
       title: 'O Test Drive Emocional (A Posse Imaginária)',
-      sellerQuote: '"Dá uma voltinha nele, Lucão! Acelera, sente o cheirinho de novo... combina demais com o seu estilo!"',
+      sellerQuote: '"Dá uma voltinha nele, Lucas! Acelera, sente o cheirinho de novo... combina demais com o seu estilo!"',
       hiddenTrap: 'Fazer você assumir a "posse psicológica" do carro. Uma vez que você se imagina dirigindo ele no dia a dia, seu cérebro para de avaliar os juros criticamente e aceita condições financeiras ruins.',
       counterMove: 'Durante o test drive, foque em achar defeitos (ruídos de suspensão, desgaste dos pneus, marcas de retoque) e mantenha cara de paisagem neutra: "É bonitinho, mas o câmbio parece um pouco lento. Vou pensar bem."',
       badge: 'Armadilha Emocional'
@@ -147,7 +147,7 @@ export const AntiGolpeTips: React.FC = () => {
       <div className="p-5 rounded-2xl bg-gradient-to-r from-amber-500/10 via-slate-900 to-slate-900 border border-amber-500/30 shadow-xl space-y-2">
         <div className="flex items-center gap-2 text-amber-400 font-black text-lg">
           <Lightbulb size={24} />
-          <span>Manual de Negociação & Psicologia do Lucão</span>
+          <span>Manual de Negociação & Psicologia do Lucas</span>
         </div>
         <p className="text-sm text-slate-300 leading-relaxed">
           Vendedor de concessionária passa por dezenas de treinamentos para fazer qualquer proposta parecer vantajosa na lábia. Aqui estão as táticas para você dominar a mesa de negociação e não deixar seu dinheiro na mão de ninguém.
@@ -236,7 +236,7 @@ export const AntiGolpeTips: React.FC = () => {
                 {/* Counter Move */}
                 <div className="p-3 rounded-xl bg-emerald-950/40 border border-emerald-800/40 text-xs text-emerald-300 space-y-1">
                   <div className="font-bold flex items-center gap-1 text-[11px] uppercase tracking-wider text-emerald-400">
-                    <Zap size={12} /> Como o Lucão Desarma:
+                    <Zap size={12} /> Como o Lucas Desarma:
                   </div>
                   <p className="leading-relaxed">
                     {trick.counterMove}

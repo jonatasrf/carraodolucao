@@ -124,7 +124,7 @@ export const ScenarioCard: React.FC<ScenarioCardProps> = ({
           </div>
         </div>
 
-        {/* Lucão Roast */}
+        {/* Lucas Roast */}
         <div className="p-3 bg-slate-950/50 rounded-xl border border-slate-800/60 text-xs text-slate-300 italic">
           "{results.verdictRoast}"
         </div>

@@ -68,7 +68,7 @@ export const ScenarioComparison: React.FC<ScenarioComparisonProps> = ({
           <Trophy size={32} />
         </div>
         <h3 className="text-xl font-black text-white">
-          Nenhum cenário salvo ainda, Lucão!
+          Nenhum cenário salvo ainda, Lucas!
         </h3>
         <p className="text-sm text-slate-400 max-w-md mx-auto">
           Adicione propostas de carros no simulador ou carregue os exemplos prontos para ver a mágica do comparador acontecer.
@@ -103,11 +103,11 @@ export const ScenarioComparison: React.FC<ScenarioComparisonProps> = ({
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
             <div className="flex items-center gap-2 text-emerald-400 font-black text-base">
               <Trophy size={20} />
-              <span>Diagnóstico Comparativo do Lucão</span>
+              <span>Diagnóstico Comparativo do Lucas</span>
             </div>
             {savings > 0 && (
               <span className="text-xs font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-3 py-1 rounded-full">
-                💰 Diferença de até {formatCurrency(savings)}!
+                💰 Economia no bolso do Lucão: até {formatCurrency(savings)}!
               </span>
             )}
           </div>

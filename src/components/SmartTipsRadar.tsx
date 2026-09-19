@@ -79,7 +79,7 @@ export const SmartTipsRadar: React.FC<SmartTipsRadarProps> = ({
       <div className="flex items-center justify-between border-b border-slate-800 bg-slate-950/70 px-2 sm:px-3 py-1.5 overflow-x-auto gap-1">
         <div className="flex items-center gap-1.5 shrink-0 text-amber-400 font-bold text-xs pr-1">
           <Sparkles size={14} className="animate-pulse" />
-          <span className="hidden sm:inline">Radar do Lucão:</span>
+          <span className="hidden sm:inline">Radar do Lucas:</span>
         </div>
 
         <div className="flex items-center gap-1 shrink-0">

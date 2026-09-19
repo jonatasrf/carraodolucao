@@ -119,7 +119,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({
             <button
               type="button"
               onClick={() => {
-                if (window.confirm('Tem certeza que deseja apagar todos os cenários salvos do Lucão?')) {
+                if (window.confirm('Tem certeza que deseja apagar todos os cenários salvos do Lucas?')) {
                   onClearAllScenarios();
                   onClose();
                 }

@@ -61,7 +61,7 @@ export const PresetsModal: React.FC<PresetsModalProps> = ({
           <div className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-amber-400" />
             <h3 className="text-base sm:text-lg font-black text-white">
-              Cenários Engraçados Prontos do Lucão
+              Cenários Engraçados Prontos do Lucas
             </h3>
           </div>
           <button

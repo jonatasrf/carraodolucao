@@ -38,7 +38,7 @@ export function generateWhatsAppSummary(scenario: Scenario): string {
     r.verdictBadge === 'perigo' ? '⚠️' : '🚨';
 
   const text = `
-🚗💨 *ANÁLISE DO CARRÃO DO LUCÃO* 💨🚗
+🚗💨 *ANÁLISE DO CARRO DO LUCAS* 💨🚗
 *Proposta:* ${scenario.title} ${scenario.dealership ? `(${scenario.dealership})` : ''}
 
 💰 *Preço do Carro:* ${formatCurrency(scenario.carPrice)}
