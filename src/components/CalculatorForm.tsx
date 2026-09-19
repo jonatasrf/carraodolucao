@@ -24,7 +24,6 @@ import type {
 import { 
   calculateInstallment, 
   calculateMonthlyRate, 
-  calculatePrincipalFromInstallment,
   computeScenarioResults 
 } from '../utils/finance';
 import { formatCurrency, formatPercent, generateWhatsAppSummary } from '../utils/formatters';
@@ -35,7 +34,7 @@ interface CalculatorFormProps {
   initialScenario?: Scenario | null;
 }
 
-type AutoCalculatedField = 'installment' | 'monthlyRate' | 'carPrice';
+type AutoCalculatedField = 'installment' | 'monthlyRate';
 
 export const CalculatorForm: React.FC<CalculatorFormProps> = ({
   onSaveScenario,
@@ -44,16 +43,15 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
   const [title, setTitle] = useState('Novo Carro do Lucão');
   const [dealership, setDealership] = useState('');
   
-  // Numerical states
+  // Numerical states (carPrice is an absolute user anchor)
   const [carPrice, setCarPrice] = useState<number>(100000);
   const [cashDownPayment, setCashDownPayment] = useState<number>(30000);
   const [termMonths, setTermMonths] = useState<number>(48);
   const [monthlyRate, setMonthlyRate] = useState<number>(1.79);
   const [installment, setInstallment] = useState<number>(2190);
 
-  // Dynamic calculation tracking
+  // Dynamic calculation tracking: strictly between installment and monthlyRate
   const [autoCalculated, setAutoCalculated] = useState<AutoCalculatedField>('installment');
-  const [lastEdited, setLastEdited] = useState<'carPrice' | 'monthlyRate' | 'installment'>('carPrice');
 
   // Trade-in car
   const [tradeInCar, setTradeInCar] = useState<TradeInCar>({
@@ -110,135 +108,102 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
     }
   }, [initialScenario]);
 
-  // Reactive handler: Car Price changed
+  // Reactive handler: Car Price changed (user typed a new car price)
   const handleCarPriceChange = (newPrice: number) => {
     setCarPrice(newPrice);
-    setLastEdited('carPrice');
-    setAutoCalculated('installment');
 
     const { totalDown, financedExtras } = getDownAndExtras(cashDownPayment, tradeInCar, additionalCosts);
     const pv = Math.max(0, newPrice - totalDown + financedExtras);
-    const newPmt = calculateInstallment(pv, monthlyRate, termMonths);
-    setInstallment(Number(newPmt.toFixed(2)));
-  };
 
-  // Reactive handler: Installment changed
-  const handleInstallmentChange = (newInstallment: number) => {
-    setInstallment(newInstallment);
-
-    const { totalDown, financedExtras } = getDownAndExtras(cashDownPayment, tradeInCar, additionalCosts);
-
-    if (lastEdited === 'monthlyRate') {
-      // User entered rate, now enters installment -> calculate Car Price
-      setAutoCalculated('carPrice');
-      const pv = calculatePrincipalFromInstallment(newInstallment, monthlyRate, termMonths);
-      const calculatedPrice = Math.max(0, Math.round(pv + totalDown - financedExtras));
-      setCarPrice(calculatedPrice);
-    } else {
-      // User entered price (or term), now enters installment -> calculate Real Rate
-      setAutoCalculated('monthlyRate');
-      const pv = Math.max(0, carPrice - totalDown + financedExtras);
-      const calculatedRate = calculateMonthlyRate(pv, newInstallment, termMonths);
+    if (autoCalculated === 'monthlyRate') {
+      const calculatedRate = calculateMonthlyRate(pv, installment, termMonths);
       setMonthlyRate(Number(calculatedRate.toFixed(2)));
-    }
-    setLastEdited('installment');
-  };
-
-  // Reactive handler: Monthly Rate changed
-  const handleMonthlyRateChange = (newRate: number) => {
-    setMonthlyRate(newRate);
-
-    const { totalDown, financedExtras } = getDownAndExtras(cashDownPayment, tradeInCar, additionalCosts);
-
-    if (lastEdited === 'installment') {
-      // User entered installment, now enters rate -> calculate Car Price
-      setAutoCalculated('carPrice');
-      const pv = calculatePrincipalFromInstallment(installment, newRate, termMonths);
-      const calculatedPrice = Math.max(0, Math.round(pv + totalDown - financedExtras));
-      setCarPrice(calculatedPrice);
     } else {
-      // User entered price, now enters rate -> calculate Installment
-      setAutoCalculated('installment');
-      const pv = Math.max(0, carPrice - totalDown + financedExtras);
-      const newPmt = calculateInstallment(pv, newRate, termMonths);
+      const newPmt = calculateInstallment(pv, monthlyRate, termMonths);
       setInstallment(Number(newPmt.toFixed(2)));
     }
-    setLastEdited('monthlyRate');
+  };
+
+  // Reactive handler: Installment changed (user types installment -> calculates Real Interest Rate)
+  const handleInstallmentChange = (newInstallment: number) => {
+    setInstallment(newInstallment);
+    setAutoCalculated('monthlyRate');
+
+    const { totalDown, financedExtras } = getDownAndExtras(cashDownPayment, tradeInCar, additionalCosts);
+    const pv = Math.max(0, carPrice - totalDown + financedExtras);
+    const calculatedRate = calculateMonthlyRate(pv, newInstallment, termMonths);
+    setMonthlyRate(Number(calculatedRate.toFixed(2)));
+  };
+
+  // Reactive handler: Monthly Rate changed (user types rate -> calculates Installment)
+  const handleMonthlyRateChange = (newRate: number) => {
+    setMonthlyRate(newRate);
+    setAutoCalculated('installment');
+
+    const { totalDown, financedExtras } = getDownAndExtras(cashDownPayment, tradeInCar, additionalCosts);
+    const pv = Math.max(0, carPrice - totalDown + financedExtras);
+    const newPmt = calculateInstallment(pv, newRate, termMonths);
+    setInstallment(Number(newPmt.toFixed(2)));
   };
 
   // Reactive handler: Term changed
   const handleTermMonthsChange = (newTerm: number) => {
     setTermMonths(newTerm);
     const { totalDown, financedExtras } = getDownAndExtras(cashDownPayment, tradeInCar, additionalCosts);
+    const pv = Math.max(0, carPrice - totalDown + financedExtras);
 
-    if (autoCalculated === 'carPrice') {
-      const pv = calculatePrincipalFromInstallment(installment, monthlyRate, newTerm);
-      const calculatedPrice = Math.max(0, Math.round(pv + totalDown - financedExtras));
-      setCarPrice(calculatedPrice);
-    } else if (autoCalculated === 'monthlyRate') {
-      const pv = Math.max(0, carPrice - totalDown + financedExtras);
+    if (autoCalculated === 'monthlyRate') {
       const calculatedRate = calculateMonthlyRate(pv, installment, newTerm);
       setMonthlyRate(Number(calculatedRate.toFixed(2)));
     } else {
-      const pv = Math.max(0, carPrice - totalDown + financedExtras);
       const newPmt = calculateInstallment(pv, monthlyRate, newTerm);
       setInstallment(Number(newPmt.toFixed(2)));
     }
   };
 
-  // Reactive handler: Down payment or Extras changed
+  // Reactive handler: Down payment changed
   const handleDownPaymentChange = (newCashDown: number) => {
     setCashDownPayment(newCashDown);
     const { totalDown, financedExtras } = getDownAndExtras(newCashDown, tradeInCar, additionalCosts);
+    const pv = Math.max(0, carPrice - totalDown + financedExtras);
 
-    if (autoCalculated === 'carPrice') {
-      const pv = calculatePrincipalFromInstallment(installment, monthlyRate, termMonths);
-      setCarPrice(Math.max(0, Math.round(pv + totalDown - financedExtras)));
-    } else if (autoCalculated === 'monthlyRate') {
-      const pv = Math.max(0, carPrice - totalDown + financedExtras);
+    if (autoCalculated === 'monthlyRate') {
       setMonthlyRate(Number(calculateMonthlyRate(pv, installment, termMonths).toFixed(2)));
     } else {
-      const pv = Math.max(0, carPrice - totalDown + financedExtras);
       setInstallment(Number(calculateInstallment(pv, monthlyRate, termMonths).toFixed(2)));
     }
   };
 
+  // Reactive handler: Trade-in changed
   const handleTradeInChange = (newTradeIn: TradeInCar) => {
     setTradeInCar(newTradeIn);
     const { totalDown, financedExtras } = getDownAndExtras(cashDownPayment, newTradeIn, additionalCosts);
+    const pv = Math.max(0, carPrice - totalDown + financedExtras);
 
-    if (autoCalculated === 'carPrice') {
-      const pv = calculatePrincipalFromInstallment(installment, monthlyRate, termMonths);
-      setCarPrice(Math.max(0, Math.round(pv + totalDown - financedExtras)));
-    } else if (autoCalculated === 'monthlyRate') {
-      const pv = Math.max(0, carPrice - totalDown + financedExtras);
+    if (autoCalculated === 'monthlyRate') {
       setMonthlyRate(Number(calculateMonthlyRate(pv, installment, termMonths).toFixed(2)));
     } else {
-      const pv = Math.max(0, carPrice - totalDown + financedExtras);
       setInstallment(Number(calculateInstallment(pv, monthlyRate, termMonths).toFixed(2)));
     }
   };
 
+  // Reactive handler: Extras changed
   const handleExtrasChange = (newExtras: AdditionalCosts) => {
     setAdditionalCosts(newExtras);
     const { totalDown, financedExtras } = getDownAndExtras(cashDownPayment, tradeInCar, newExtras);
+    const pv = Math.max(0, carPrice - totalDown + financedExtras);
 
-    if (autoCalculated === 'carPrice') {
-      const pv = calculatePrincipalFromInstallment(installment, monthlyRate, termMonths);
-      setCarPrice(Math.max(0, Math.round(pv + totalDown - financedExtras)));
-    } else if (autoCalculated === 'monthlyRate') {
-      const pv = Math.max(0, carPrice - totalDown + financedExtras);
+    if (autoCalculated === 'monthlyRate') {
       setMonthlyRate(Number(calculateMonthlyRate(pv, installment, termMonths).toFixed(2)));
     } else {
-      const pv = Math.max(0, carPrice - totalDown + financedExtras);
       setInstallment(Number(calculateInstallment(pv, monthlyRate, termMonths).toFixed(2)));
     }
   };
 
-  // Run calculation results for display and diagnosis
+  // Run calculation results for display and diagnosis (carPrice remains 100% immutable)
   const calculationMode: CalculationMode = 
-    autoCalculated === 'carPrice' ? 'SOLVE_PRICE' :
     autoCalculated === 'monthlyRate' ? 'SOLVE_RATE' : 'SOLVE_INSTALLMENT';
+
 
   const calculation = computeScenarioResults({
     carPrice,
@@ -309,15 +274,12 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
         <div className="flex items-center gap-2 text-xs text-slate-200">
           <Sparkles className="w-4 h-4 text-amber-400 shrink-0 animate-pulse" />
           <span>
-            <strong>Simulador Inteligente:</strong> todos os campos são editáveis! Altere o preço, a parcela ou a taxa e as outras células recalculam sozinhas.
+            <strong>Simulador Inteligente:</strong> edite a Parcela para descobrir a Taxa Real do banco, ou altere a Taxa para calcular a Parcela. O <strong>Valor do Carro</strong> permanece sempre fixo conforme sua escolha!
           </span>
         </div>
         <div className="hidden sm:flex items-center gap-1.5 shrink-0 text-[11px] font-bold text-amber-300 bg-amber-500/15 px-2 py-0.5 rounded-full border border-amber-500/30">
           <Zap size={12} />
-          <span>Auto-calculando: {
-            autoCalculated === 'installment' ? 'Parcela' :
-            autoCalculated === 'monthlyRate' ? 'Taxa Real' : 'Preço do Carro'
-          }</span>
+          <span>Calculando: {autoCalculated === 'installment' ? 'Parcela' : 'Taxa de Juros Real'}</span>
         </div>
       </div>
 
@@ -355,18 +317,13 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
               </div>
             </div>
 
-            {/* Car Price Input */}
+            {/* Car Price Input (Fixed anchor) */}
             <div>
               <div className="flex items-center justify-between mb-1">
                 <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
                   <Car className="w-4 h-4 text-amber-400" />
                   Valor do Carro Novo (R$)
                 </label>
-                {autoCalculated === 'carPrice' && (
-                  <span className="text-[11px] font-bold text-amber-400 bg-amber-500/15 px-2 py-0.5 rounded border border-amber-500/30 flex items-center gap-1">
-                    <Zap size={11} /> Calculado
-                  </span>
-                )}
               </div>
               <div className="relative">
                 <input
@@ -375,11 +332,7 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
                   value={carPrice || ''}
                   onChange={(e) => handleCarPriceChange(parseFloat(e.target.value) || 0)}
                   placeholder="100000"
-                  className={`w-full bg-slate-950 border rounded-xl px-4 py-2.5 text-lg font-bold text-white focus:outline-none transition-all ${
-                    autoCalculated === 'carPrice'
-                      ? 'border-amber-500 ring-1 ring-amber-500/30 bg-amber-950/10 text-amber-300'
-                      : 'border-slate-700/80 focus:border-amber-500'
-                  }`}
+                  className="w-full bg-slate-950 border border-slate-700/80 focus:border-amber-500 rounded-xl px-4 py-2.5 text-lg font-bold text-white focus:outline-none transition-all"
                 />
               </div>
             </div>
